@@ -34,6 +34,7 @@ const Home = () => {
     const [isDisqualifiedSwitch, setisDisqualifiedSwitch] = useState(false)
 
     const [outcome, setOutcome] = useState("");
+    const [comments, setComments] = useState("");
 
     const handleTaxi = () => {
         // alert(state)
@@ -477,7 +478,20 @@ const Home = () => {
                 </View>
             </View>
 
+            <View style = {{alignSelf: 'center', justifyContent: 'center', marginTop: 60}}>
+                <Text style = {{fontSize: 30, alignSelf: 'center'}}>---- comments ----</Text>
 
+
+                <TextInput
+                    placeholder = "exta comments"
+                    value = {comments}
+                    onChangeText = {text => setComments(text)}
+                    style = {styles.comments}
+                    multiline = {true}
+                                       
+                />
+                
+            </View>
             <View style = {{flexDirection: 'row', alignSelf:'center', marginTop: 30}}>
 
                 <AntDesign name='close' size={45} color={'#0782F9'} style = {{marginRight: 60}} onPress={() => {setIsInputVisible(false)}}/> 
@@ -536,5 +550,14 @@ const styles = StyleSheet.create({
         marginTop: 5,
         width: 100
     },
+    comments: {
+        width: 350,
+        height: 120,
+        marginTop: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,     
+        paddingHorizontal: 15,
+        paddingVertical: 10    
+    }
 
   });
