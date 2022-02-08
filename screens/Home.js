@@ -373,7 +373,7 @@ const Home = () => {
             </View>
             
         </View>
-        </ScrollView>
+        </ScrollView >
         </>
       </Modal>
     </View>
