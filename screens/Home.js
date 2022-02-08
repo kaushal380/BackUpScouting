@@ -6,7 +6,7 @@ import { Slider } from 'react-native-elements';
 
 const Home = () => {
     const [isInputVisible, setIsInputVisible] = useState(false)
-    const [taxi, setTaxi] = useState(true)
+    const [taxi, setTaxi] = useState(false)
     const [taxiSwitch, setTaxiSwitch] = useState(false)
     const [Team, setTeam] = useState('')
     const [match, setMatch] = useState('')
@@ -24,6 +24,15 @@ const Home = () => {
 
     const [Drivetrainranking, setDrivetrainranking] = useState();
     const [DefenseRanking, setDefenceRanking] = useState();
+
+    const [techFoul, setTechFoul] = useState(0);
+    const [RedCard, setRedCard] = useState(0);
+    const [YelloCard, setYelloCard] = useState(0);
+    const [isDeactivated, setIsDeactivated] = useState(false);
+    const [isDeactivatedSwtich, setisDeactivatedSwtich] = useState(false)
+    const [isDisqualified, setIsDisqualified] = useState(false);
+    const [isDisqualifiedSwitch, setisDisqualifiedSwitch] = useState(false)
+
     const [outcome, setOutcome] = useState("");
 
     const handleTaxi = () => {
@@ -98,6 +107,38 @@ const Home = () => {
         }
         setTeleUpper(setNum)
     }
+    const handleNumPenalities = (PenalityType, incOrdec) => {
+        let setNum = 0
+        if(PenalityType === "tech"){
+            setNum = techFoul;
+        }
+        else if (PenalityType === "yellow"){
+            setNum = YelloCard;
+        }
+        else if(PenalityType === "red"){
+            setNum = RedCard;
+        }
+
+        if(incOrdec === "plus"){
+            setNum++;
+        }
+        else {
+            if(setNum>0){
+                setNum--;
+            }
+        }
+
+        if(PenalityType === "tech"){
+            setTechFoul(setNum);
+        }
+        else if (PenalityType === "yellow"){
+            setYelloCard(setNum);
+        }
+        else if(PenalityType === "red"){
+            setRedCard(setNum);
+        }
+
+    }
 
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
@@ -145,6 +186,18 @@ const Home = () => {
         
     }
 
+    const handleDeactivation = (value) => {
+        // alert(value)
+        setIsDeactivated(isDeactivatedSwtich);
+        setisDeactivatedSwtich(!isDeactivatedSwtich)
+        alert(isDeactivated)
+    }
+    const handleDisqualify = (value) => {
+        // alert(value)
+        setIsDisqualified(isDisqualifiedSwitch);
+        setisDisqualifiedSwitch(!isDisqualifiedSwitch)
+        alert(isDisqualified)
+    }
   return (
     <>
     <View style>
@@ -185,7 +238,7 @@ const Home = () => {
             />
             </View>
 
-            <Text style = {{alignSelf: 'center', marginTop: 30, fontSize: 30}}>
+            <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30}}>
                 ----  Autonomous  ----
             </Text>
 
@@ -228,7 +281,7 @@ const Home = () => {
             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleCargoUpper('plus')}/>
             </View>
 
-            <Text style = {{alignSelf: 'center', marginTop: 30, fontSize: 30}}>
+            <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30}}>
                 ----  Teleop  ----
             </Text>
 
@@ -326,7 +379,7 @@ const Home = () => {
                     </TouchableOpacity>
 
                 </View>
-            <Text style = {{alignSelf: 'center', marginTop: 30, fontSize: 30}}>
+            <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30}}>
                 ---- Drivetrain ----
             </Text>
             <View style = {{marginTop: 40, alignContent: 'center', marginRight: 40}}> 
@@ -335,7 +388,7 @@ const Home = () => {
                 value = {Drivetrainranking}
                 onValueChange = {(num) => {setDrivetrainranking(num)} }
                 minimumValue = {1}
-                maximumValue ={10}
+                maximumValue ={5}
                 step = {1}
                 onSlidingComplete = {(num) => {setDrivetrainranking(num)} }
                 allowTouchTrack
@@ -349,7 +402,7 @@ const Home = () => {
                 value = {DefenseRanking}
                 onValueChange = {(num) => {setDefenceRanking(num)} }
                 minimumValue = {1}
-                maximumValue ={10}
+                maximumValue ={5}
                 step = {1}
                 onSlidingComplete = {(num) => {setDefenceRanking(num)} }
                 allowTouchTrack
@@ -359,13 +412,72 @@ const Home = () => {
             </View>
             </View>
             
-            <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
+            <View style = {{alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
                 <Text style = {{alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30}}>
                     ---- Penalities ----
                 </Text>
+                
+                <View style = {{flexDirection: 'row', marginTop: 30}}>
+                    <Text style = {{fontSize: 25}}>TechFoul: </Text>
+                
 
+                <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("tech", "minus")}/>
+                <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text>{techFoul}</Text>
+                </TouchableOpacity>
+                <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("tech", "plus")}/>
+                </View>
 
+                <View style = {{flexDirection: 'row', marginTop: 30}}>
+                    <Text style = {{fontSize: 25}}>YelloCards: </Text>
+                
+
+                <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("yellow", "minus")}/>
+                <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text>{YelloCard}</Text>
+                </TouchableOpacity>
+                <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("yellow", "plus")}/>
+                </View>
+
+                <View style = {{flexDirection: 'row', marginTop: 30}}>
+                    <Text style = {{fontSize: 25}}>RedCards: </Text>
+                
+
+                <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("red", "minus")}/>
+                <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text>{RedCard}</Text>
+                </TouchableOpacity>
+                <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("red", "plus")}/>
+                </View>
+                
+                <View style = {{flexDirection: 'row', marginTop: 30}}>
+                <Text style = {{fontSize: 25, marginRight: 10}}>Deactivated: </Text>
+                {/* add human player shot*/}
+                <Switch
+                    style = {{position: 'absolute', bottom: -11, left: 140,}}
+                    trackColor={{ false: "grey", true: "grey" }}//#767577
+                    thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                    ios_backgroundColor="#3e3e3e"
+                    value={isDeactivatedSwtich}
+                    onValueChange={(value) => {handleDeactivation(value)}}   
+                />
+                </View>
+
+                <View style = {{flexDirection: 'row', marginTop: 30}}>
+                <Text style = {{fontSize: 25, marginRight: 10}}>Disqualified: </Text>
+                {/* add human player shot*/}
+                <Switch
+                    style = {{position: 'absolute', bottom: -11, left: 140,}}
+                    trackColor={{ false: "grey", true: "grey" }}//#767577
+                    thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                    ios_backgroundColor="#3e3e3e"
+                    value={isDisqualifiedSwitch}
+                    onValueChange={(value) => {handleDisqualify(value)}}   
+                />
+                </View>
             </View>
+
+
             <View style = {{flexDirection: 'row', alignSelf:'center', marginTop: 30}}>
 
                 <AntDesign name='close' size={45} color={'#0782F9'} style = {{marginRight: 60}} onPress={() => {setIsInputVisible(false)}}/> 
