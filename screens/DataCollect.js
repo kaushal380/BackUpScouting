@@ -3,8 +3,10 @@ import React, {useState} from 'react';
 import {AntDesign, Entypo} from "@expo/vector-icons"
 import { Slider } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
+import { firebase } from '../firebase/config';
 
 const DataCollect = () => {
+    const firebaseAccess = firebase.firestore()
     const navigation = useNavigation()
     const [taxi, setTaxi] = useState(false)
     const [taxiSwitch, setTaxiSwitch] = useState(false)
@@ -224,7 +226,9 @@ const DataCollect = () => {
             return;
         }
 
-        const object = {
+        let object = 
+        [
+        {
             matchNum: match,
             teamNum: Team,
             taxi: taxi,
@@ -243,10 +247,13 @@ const DataCollect = () => {
             disqualified: isDisqualified,
             extraComments: comments,
         }
-        console.log(object)
-
-        handleModalCancel()
+    ]   
+    
+        // object = addNewData(object)
+        // console.log(object)
         
+        addNewData(object);
+        handleModalCancel()
     }
 
     const handleModalCancel = () => {
@@ -277,6 +284,23 @@ const DataCollect = () => {
         setisDisqualifiedSwitch(false)
         setComments("")
         navigation.navigate('Home')
+    }
+
+    const addNewData = async (newList) => {
+        const documentSnapshot = await firebase.firestore()
+        .collection('data')
+        .doc('matchData')
+        .get()
+        
+        let existingData = Object.values(Object.seal(documentSnapshot.data()))
+        let finalList = existingData.concat(newList)
+        let finalObject = Object.assign({}, finalList)
+        // console.log(finalObject)
+        firebaseAccess
+            .collection('data')
+            .doc('matchData')
+            .set(finalObject)
+        
     }
 
   return (
