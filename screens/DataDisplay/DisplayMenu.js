@@ -1,51 +1,56 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, Switch, ScrollView } from 'react-native';
-import React, {useState} from 'react';
-import {AntDesign, Entypo} from "@expo/vector-icons"
-import { Slider } from 'react-native-elements';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import React from 'react'
 import { useNavigation } from '@react-navigation/core';
-import DataCollect from './DataCollect';
 
-const Home = () => {
+const DisplayMenu = () => {
     const navigation = useNavigation();
-    return(
+  return (
     <View style = {styles.container}>
-        <Text style = {styles.title}>
-            Techno Titans
-        </Text>
-        <View style = {styles.buttonView}>
-        <TouchableOpacity
+      <Text style = {styles.title}>View teams based on: </Text>
+
+    <View style = {styles.buttonView}>
+      <TouchableOpacity
             style = {styles.ButtonsContainer}
-            onPress = {() => {navigation.navigate('DataCollect')}}
+            onPress = {() => {navigation.navigate('Shooting')}}
         >
             <Text style = {styles.Buttontext}>
-                Scout Data
+                Best Shooters
             </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
             style = {styles.ButtonsContainer}
-            onPress = {() => {navigation.navigate('Pits')}}
+            onPress = {() => {navigation.navigate('Defense')}}
         >
             <Text style = {styles.Buttontext}>
-                pit scouting
+                Best defense
             </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
             style = {styles.ButtonsContainer}
-            onPress = {() => {navigation.navigate('DisplayContainer')}}
+            onPress = {() => {navigation.navigate('Climb')}}
         >
             <Text style = {styles.Buttontext}>
-                View Data
+                Best climb
             </Text>
         </TouchableOpacity>
 
-        </View>
+        <TouchableOpacity
+            style = {styles.ButtonsContainer}
+            onPress = {() => {navigation.navigate('Auto')}}
+        >
+            <Text style = {styles.Buttontext}>
+                Best Autonomous
+            </Text>
+        </TouchableOpacity>
     </View>
-    );
+    </View>
+  )
 }
 
-export default Home;
+export default DisplayMenu
+
 
 const styles = StyleSheet.create({
     container: {
@@ -56,12 +61,12 @@ const styles = StyleSheet.create({
       
     },
     buttonView: {
-        marginTop: 150
+        marginTop: 50
     },
 
     ButtonsContainer: {
         backgroundColor: "#0782F9",
-        width: 300,
+        width: 350,
         justifyContent: 'center',
         alignItems: 'center',
         height: 100,
@@ -74,7 +79,7 @@ const styles = StyleSheet.create({
         fontWeight: '700'
     },
     title: {
-        fontSize: 40,
+        fontSize: 30,
         marginTop: 10,
     }
   });
