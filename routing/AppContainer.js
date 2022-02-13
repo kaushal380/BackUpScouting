@@ -14,7 +14,7 @@ const AppContainer = () => {
       <Stack.Screen options = {{headerShown: true, headerTitle: 'home'}} name = "Home" component = {Home} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Data Input'}} name = "DataCollect" component = {DataCollect} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Pitscouting'}} name = "Pits" component = {Pitscouting} />
-      <Stack.Screen options = {{headerShown: false}} name = "DisplayContainer" component = {DisplayContainer} />
+      <Stack.Screen options = {{headerShown: true}} name = "DisplayContainer" component = {DisplayContainer} />
     </Stack.Navigator>
   
   )
