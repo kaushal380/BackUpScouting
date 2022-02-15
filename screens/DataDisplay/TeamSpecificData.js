@@ -7,6 +7,8 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
   const [matchDetails, setMatchDetails] = useState([1, 2, 3, 4]);
   const [teleUpper, setTeleUpper] = useState([34, 5, 3, 2,39]);
   const [teleLower, setTeleLower] = useState([34,4,2,23])
+  const [autoUpper, setAutoUpper] = useState([34, 5, 3, 2,39]);
+  const [autoLower, setAutoLower] = useState([34,4,2,23])
   const [climbData, setClimbData] = useState([])
 
   const [chartConfig, setChartConfit] = useState({
@@ -54,6 +56,10 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
       setTeleUpperCargoData()
       setTeleLowerCargoData()
       setClimbs()
+      setAutoUpperCargoData()
+      setAutoLowerCargoData()
+      setAutoUpperCargoData()
+      setAutoLowerCargoData()
     }
 
     const initializeConsts = () => {
@@ -76,7 +82,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
 
       matches = matches.sort(function(a,b) {return a-b})
       matches = [... new Set(matches)];
-      // console.log(matches)
+      
       let finalData = [filteredTeamData, matches]
       return finalData;
     }
@@ -101,7 +107,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
         averageShootingData = [...averageShootingData, matchAvg]      
       }
 
-      // console.log(averageShootingData)
+     
       setTeleUpper(averageShootingData)
       }
     
@@ -127,6 +133,59 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
   
         setTeleLower(averageShootingData)
         }
+
+        const setAutoUpperCargoData = () => {
+
+          let filteredTeamData = initializeConsts()[0]
+          let matches = initializeConsts()[1]
+          let averageShootingData = []
+    
+          setMatchDetails(matches)
+          for (let index = 0; index < matches.length; index++) {
+            let totalScore = 0;
+            let counter = 0;
+            for(let i = 0; i < filteredTeamData.length; i++){
+              if(matches[index] == filteredTeamData[i].matchNum){
+                totalScore = totalScore + filteredTeamData[i].autoUpperCargo;
+                counter++
+              }
+            }
+            let matchAvg = totalScore/counter;
+            averageShootingData = [...averageShootingData, matchAvg]      
+          }
+    
+          // return averageShootingData;
+          setAutoUpper(averageShootingData)
+          // setAutoUpper([3, 4, 3,4])
+          // console.log(autoUpper)
+
+          
+          }
+
+          const setAutoLowerCargoData = () => {
+
+            let filteredTeamData = initializeConsts()[0]
+            let matches = initializeConsts()[1]
+            let averageShootingData = []
+      
+            setMatchDetails(matches)
+            for (let index = 0; index < matches.length; index++) {
+              let totalScore = 0;
+              let counter = 0;
+              for(let i = 0; i < filteredTeamData.length; i++){
+                if(matches[index] == filteredTeamData[i].matchNum){
+                  totalScore = totalScore + filteredTeamData[i].autoLowerCargo;
+                  counter++
+                }
+              }
+              let matchAvg = totalScore/counter;
+              averageShootingData = [...averageShootingData, matchAvg]      
+            }
+      
+            setAutoLower(averageShootingData)
+            // console.log(autoLower)
+            // return averageShootingData;
+            }
 
         const setClimbs = () => {
           let filteredTeamData = initializeConsts()[0]
@@ -194,7 +253,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
                 highCheck = numCheck[index]
               }
             }
-            console.log("highest value:" + highCheck)
+            
             for (let index = 0; index < arrayCheck.length; index++) {
               if(arrayCheck[index].num === highCheck){
                 ClimbType = arrayCheck[index].type
@@ -259,7 +318,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             ];
             
             setClimbData(data)
-            console.log(climbData)
+            
           }
         
 
@@ -327,6 +386,47 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
         center = {[10, 10]}
         absolute
     />
+    <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900'}}>Auto data: </Text>
+    <Text style = {{alignSelf: 'center', fontSize: 20, color: 'black', marginTop: 20}}>Auto Upper Cargo</Text>
+    <LineChart
+            data={{
+              labels: matchDetails,
+              datasets: [
+                {
+                  data: autoUpper
+                }
+              ]
+            }}
+            width={Dimensions.get("window").width} // from react-native
+            height={220}
+            yAxisInterval={5} // optional, defaults to 1
+            chartConfig={LineChartConfig}
+            // bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
+    <Text style = {{alignSelf: 'center', fontSize: 20, color: 'black', marginTop: 20}}>Auto Lower Cargo</Text>
+        <LineChart
+            data={{
+              labels: matchDetails,
+              datasets: [
+                {
+                  data: autoLower
+                }
+              ]
+            }}
+            width={Dimensions.get("window").width} // from react-native
+            height={220}
+            yAxisInterval={5} // optional, defaults to 1
+            chartConfig={LineChartConfig}
+            // bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
     
     <Text style = {{fontSize: 40, marginTop: 30}}>Print raw</Text>
     <Text style = {{fontSize: 40}} onPress={closeModal}>close Modal</Text>
