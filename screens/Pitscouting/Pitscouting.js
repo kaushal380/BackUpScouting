@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import {  TouchableOpacity, SafeAreaView, StyleSheet, TextInput, Text, View, ScrollView} from "react-native";
+import {  TouchableOpacity, SafeAreaView, StyleSheet, TextInput, Text, View, ScrollView, KeyboardAvoidingView} from "react-native";
 import { Slider } from 'react-native-elements';
 import Climb from "../DataDisplay/Climb";
+import {AntDesign, Entypo} from "@expo/vector-icons"
+import { useNavigation } from '@react-navigation/core';
+import { firebase } from "../../firebase/config";
 
 const PitScouting = () => {
-  const [text, onChangeText] = useState("Enter");
-  const [text1, onChangeText1] = useState("Enter");
-  const [comments, whatyougottasayaboutem] = useState("Enter");
+  const navigation = useNavigation();
+  const firebaseAccess = firebase.firestore()
+  const [text, onChangeText] = useState("");
+  const [text1, onChangeText1] = useState("");
+  const [comments, whatyougottasayaboutem] = useState("");
   const [Visualranking, setvisualranking] = useState(1);
   const [holonomic, setholonomic] = useState("white")
   const [nonholonomic, setnonholonmic] = useState("white")
@@ -14,45 +19,95 @@ const PitScouting = () => {
   const [NoC, setNoC] = useState("white")
   const [YesS, setYesS] = useState("white")
   const [NoS, setNoS] = useState("white")
+  const [drivetrain, SetDrivetrain] = useState("");
+  const [climbExists, setClimbExsists] = useState(false)
+  const [shooterExists, setShooterExists] = useState(false)
+
   const drivetraintype = (type) => {
     let selectedcolor = "#0782F9"
 
     if(type === "holonomic"){
       setholonomic(selectedcolor)
       setnonholonmic("white")
+      SetDrivetrain("holonomic");
 
     }
     if(type === "nonholonomic"){
       setholonomic("white")
       setnonholonmic(selectedcolor)
-
+      SetDrivetrain("non-holonomic")
     }
   }
 
-  const condition = (type) => {
+  const handlePitSubmit = () => {
+
+    let obj = 
+    [
+    {
+      visuals: Visualranking,
+      drivetrainType: drivetrain, 
+      climbExist: climbExists,
+      shooterExist: shooterExists,
+      robotStatus: text,
+      graciousProfessionalism: text1,
+      extraComments: comments
+    }
+  ]
+
+    console.log(obj);
+    addNewData(obj)
+    handleCancel()
+  }
+
+  const handleCancel = () => {
+    navigation.navigate('Home');
+  }
+
+  const addNewData = async (newList) => {
+    const documentSnapshot = await firebase.firestore()
+    .collection('data')
+    .doc('pitScouting')
+    .get()
+    
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+    let finalList = existingData.concat(newList)
+    let finalObject = Object.assign({}, finalList)
+    // console.log(finalObject)
+    firebaseAccess
+        .collection('data')
+        .doc('pitScouting')
+        .set(finalObject)
+    
+}
+
+  const checkClimb = (type) => {
     let selectedcolor1 = "#0782F9"
       if(type === "Yes"){
         setYesC(selectedcolor1)
         setNoC("white")
+        setClimbExsists(true)
 
       }
       if(type === "No"){
         setYesC("white")
         setNoC(selectedcolor1)
+        setClimbExsists(false)
       }
 
 
     }
-    const condition1 = (type) => {
+    const checkShooter = (type) => {
       let selectedcolor2 = "#0782F9"
         if(type === "Yes"){
           setYesS(selectedcolor2)
           setNoS("white")
+          setShooterExists(true)
   
         }
         if(type === "No"){
           setYesS("white")
           setNoS(selectedcolor2)
+          setShooterExists(false)
         }
   
   
@@ -66,7 +121,10 @@ const PitScouting = () => {
   return (
     <ScrollView>
     <SafeAreaView>
-      
+    <KeyboardAvoidingView
+            style = {styles.container}
+            behavior = "padding" // try padding for ios maybe?
+        >
       <Text style = {{alignSelf: 'center', marginTop: 20, fontSize: 30}}>
              ---- Visuals ----
          </Text>
@@ -86,12 +144,12 @@ const PitScouting = () => {
          />
          </View>
          
-         <Text style = {{alignSelf: 'center', marginTop: 20, fontSize: 30}}>
-             ----What type of drivetrain----
+         <Text style = {styles.subHeader}>
+             ----Mechanisms----
          </Text>
-
-         <View style = {{flexDirection: 'row', alignSelf: 'center', marginTop: 10}}>
-
+         
+         <View style = {styles.mechRow}>
+          <Text style = {styles.mechText}>drivetrain: </Text>
          <TouchableOpacity 
                      style = {{backgroundColor: holonomic, 
                      borderRadius: 5, 
@@ -117,60 +175,56 @@ const PitScouting = () => {
                      <Text>nonholonomic</Text>
                  </TouchableOpacity>
             </View>
+          
 
-            <Text style = {styles.subHeader}>
-             ----Climb----
-         </Text>
-         <View style = {{flexDirection: 'row', alignSelf: 'center', marginTop: 10}}>
-
+         <View style = {styles.mechRow}>
+          <Text style = {styles.mechText}>Climb: </Text>
          <TouchableOpacity 
                      style = {{backgroundColor: YesC, 
                      borderRadius: 5, 
-                     width: 100, height: 30, 
+                     width: 70, height: 30, 
                      marginRight: 10, marginTop: 10,
                      justifyContent: 'center', alignItems: 'center'}}
                      
-                     onPress={() => {condition("Yes")}}
+                     onPress={() => {checkClimb("Yes")}}
                  >
                      <Text>Yes</Text>
                  </TouchableOpacity>
           <TouchableOpacity 
                      style = {{backgroundColor: NoC, 
                      borderRadius: 5, 
-                     width: 100, height: 30, 
+                     width: 70, height: 30, 
                      marginRight: 10, marginTop: 10,
                      justifyContent: 'center', alignItems: 'center'}}
                      
-                     onPress={() => {condition("No")}}
+                     onPress={() => {checkClimb("No")}}
                  >
                      <Text>No</Text>
                  </TouchableOpacity>
           </View>
 
-          <Text style = {styles.subHeader}>
-             ----Shooter----
-         </Text>
-         <View style = {{flexDirection: 'row', alignSelf: 'center', marginTop: 10}}>
-
+                  
+         <View style = {styles.mechRow}>
+          <Text style = {styles.mechText}>Shooter: </Text>
          <TouchableOpacity 
                      style = {{backgroundColor: YesS, 
                      borderRadius: 5, 
-                     width: 100, height: 30, 
+                     width: 70, height: 30, 
                      marginRight: 10, marginTop: 10,
                      justifyContent: 'center', alignItems: 'center'}}
                      
-                     onPress={() => {condition1("Yes")}}
+                     onPress={() => {checkShooter("Yes")}}
                  >
                      <Text>Yes</Text>
                  </TouchableOpacity>
           <TouchableOpacity 
                      style = {{backgroundColor: NoS, 
                      borderRadius: 5, 
-                     width: 100, height: 30, 
+                     width: 70, height: 30, 
                      marginRight: 10, marginTop: 10,
                      justifyContent: 'center', alignItems: 'center'}}
                      
-                     onPress={() => {condition1("No")}}
+                     onPress={() => {checkShooter("No")}}
                  >
                      <Text>No</Text>
                  </TouchableOpacity>
@@ -182,6 +236,7 @@ const PitScouting = () => {
          </Text>
       <Text style={styles.textBoxComment}>Robot still being worked on</Text>
       <TextInput
+        placeholder="enter"
         style={styles.input}
         multiline
         onChangeText={onChangeText}
@@ -189,6 +244,7 @@ const PitScouting = () => {
       />
        <Text style={styles.textBoxComment}>Gracious professionalism</Text>
       <TextInput
+        placeholder="enter"
         style={styles.input}
         multiline
         onChangeText={onChangeText1}
@@ -196,11 +252,19 @@ const PitScouting = () => {
       />
       <Text style={styles.textBoxComment}>Extra comments</Text>
       <TextInput
+        placeholder="enter"
         style={styles.input}
         multiline
         onChangeText={whatyougottasayaboutem}
         value={comments}
       />
+
+      <View style = {{flexDirection: 'row', alignSelf:'center', marginTop: 30}}>
+
+        <AntDesign name='close' size={45} color={'#0782F9'} style = {{marginRight: 60}} onPress = {handleCancel}/> 
+        <AntDesign name='check' size={45} color={'#0782F9'} style = {{marginLeft: 60}} onPress={() => {handlePitSubmit()}}/> 
+      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
     </ScrollView>
   );
@@ -225,7 +289,18 @@ const styles = StyleSheet.create({
     alignSelf: 'center', 
     marginVertical: 40, 
     fontSize: 30, 
-  }
+  }, 
+  mechRow: {
+    flexDirection: 'row', 
+    alignSelf: 'flex-start', 
+    marginLeft: 45, 
+    marginVertical: 15
+  },
+  mechText: {
+    fontSize: 20, 
+    marginTop: 10, 
+    marginRight: 15
+  } 
 });
 
 export default PitScouting;

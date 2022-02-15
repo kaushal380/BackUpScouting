@@ -4,12 +4,21 @@ import {AntDesign, Entypo} from "@expo/vector-icons"
 import { Slider } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
 import DataCollect from './DataCollect';
+import { firebase } from '../firebase/config';
 
 const Home = () => {
+    const firebaseAccess = firebase.firestore()
     const navigation = useNavigation();
+
+    const clearFireBase = () => {
+        firebaseAccess
+            .collection('data')
+            .doc('matchData')
+            .set({})
+    }
     return(
     <View style = {styles.container}>
-        <Text style = {styles.title}>
+        <Text style = {styles.title} onPress = {clearFireBase}>
             Techno Titans
         </Text>
         <View style = {styles.buttonView}>
