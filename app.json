@@ -17,8 +17,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "technotitans.scoutapp",
+      "buildNumber": "1.0.0"
     },
+    "description": "testing in progress",
     "android": {
       "package": "technotitans.scoutapp",
       "adaptiveIcon": {
