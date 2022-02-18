@@ -38,6 +38,29 @@ const TeleUpperCargo = () => {
     setRawData(raw);
   }
 
+  const getFilteredTeamData = (team) => {
+    let raw = rawData;
+    let filteredTeamData = []
+    for (let index = 0; index < raw.length; index++) {
+      if(raw[index].teamNum === team){
+        filteredTeamData = [...filteredTeamData, raw[index]]
+      }
+    }
+    return filteredTeamData;
+  }
+
+  const getMatches = (team) => {
+    let raw = rawData;
+    let matches = []
+    for (let index = 0; index < raw.length; index++) {
+      if(raw[index].teamNum === team){
+        matches = [...matches, raw[index].matchNum]
+      }
+    }
+    matches = [...new Set(matches)];
+    return matches;
+  }
+
   const assignShooterObject = () => {
     getDBData()
     let raw = rawData
@@ -51,16 +74,48 @@ const TeleUpperCargo = () => {
     for (let index = 0; index < teams.length; index++) {
       let counter = 0
       let total = 0
-      for (let i = 0; i < raw.length; i++) {
-        if(teams[index] === raw[i].teamNum){
-          counter++;
-          total = total + raw[i].teleUpperCargo;
+      let totalDistance = 0
+      let distanceCounter = 0
+      let team = teams[index]
+      let filteredTeamData = getFilteredTeamData(team)
+      let matches = getMatches(team)
+
+      let perMatchAverage = []
+      for (let index = 0; index < matches.length; index++) {
+        let total = 0
+        let counter = 0
+        for (let i = 0; i < filteredTeamData.length; i++) {
+          if(filteredTeamData[i].matchNum === matches[index]){
+            total = total+filteredTeamData[i].teleUpperCargo;
+            counter++
+          }
         }
+        let average = total/counter;
+        perMatchAverage = [...perMatchAverage, average];
+      }
+      
+      for (let index = 0; index < perMatchAverage.length; index++) {
+        total = total + perMatchAverage[index];
+        counter++;
       }
       let average = total/counter;
+
+      let distancesFromAverage = []
+      for(let c = 0; c < perMatchAverage.length; c++) {
+        let distance = Math.abs(perMatchAverage[c] - average)
+        distancesFromAverage = [...distancesFromAverage, distance]
+      }
+      
+      for (let index = 0; index < distancesFromAverage.length; index++) {
+        totalDistance = totalDistance+distancesFromAverage[index];
+        distanceCounter++;
+      }
+      let consistency = totalDistance/distanceCounter
+
       let obj = {
         team: teams[index],
-        avg: average
+        avg: average,
+        consis: consistency
       }
       assignAverageList = [...assignAverageList, obj];
     }
@@ -68,22 +123,34 @@ const TeleUpperCargo = () => {
   }
 
   const setVisibleList = (type) => {
-    let averageList = assignShooterObject();
+    let objectList = assignShooterObject();
     let averageNums = []
     let consistentNums = []
     let Finallist = []
-    for (let index = 0; index < averageList.length; index++) {
-      averageNums = [...averageNums, averageList[index].avg]
+    for (let index = 0; index < objectList.length; index++) {
+      averageNums = [...averageNums, objectList[index].avg]
+      consistentNums = [...consistentNums, objectList[index].consis]
     }
 
     averageNums = averageNums.sort(function(a,b) {return b-a})
     averageNums = [... new Set(averageNums)];
+    consistentNums = consistentNums.sort(function(a,b) {return a-b})
+    consistentNums = [... new Set(consistentNums)]
 
     if(type === "average"){
       for (let index = 0; index < averageNums.length; index++) {
-        for(let i = 0; i< averageList.length; i++){
-          if(averageNums[index] === averageList[i].avg){
-            Finallist = [...Finallist, averageList[i]]
+        for(let i = 0; i< objectList.length; i++){
+          if(averageNums[index] === objectList[i].avg){
+            Finallist = [...Finallist, objectList[i]]
+          }
+        }
+      }
+    }
+    if(type === "consistency"){
+      for (let index = 0; index < consistentNums.length; index++) {
+        for(let i = 0; i< objectList.length; i++){
+          if(consistentNums[index] === objectList[i].consis){
+            Finallist = [...Finallist, objectList[i]]
           }
         }
       }
@@ -138,6 +205,7 @@ const TeleUpperCargo = () => {
                     <>
                         <Text style = {{fontSize: 20, color: 'white'}}>team Number: {data.item.team}</Text>
                         <Text>average: {data.item.avg}</Text>
+                        <Text>consistency: {data.item.consis}</Text>
                     </>
                 </TouchableOpacity>
             )
