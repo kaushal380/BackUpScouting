@@ -9,8 +9,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
   const [teleLower, setTeleLower] = useState([34,4,2,23])
   const [autoUpper, setAutoUpper] = useState([34, 5, 3, 2,39]);
   const [autoLower, setAutoLower] = useState([34,4,2,23])
-  const [climbData, setClimbData] = useState([])
-
+  const [climbData, setClimbData] = useState([])  
   const [chartConfig, setChartConfit] = useState({
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -58,10 +57,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
       setClimbs()
       setAutoUpperCargoData()
       setAutoLowerCargoData()
-      setAutoUpperCargoData()
-      setAutoLowerCargoData()
     }
-
     const initializeConsts = () => {
       let raw = rawData;
       let matches = []

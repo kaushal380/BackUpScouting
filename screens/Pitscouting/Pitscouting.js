@@ -22,6 +22,7 @@ const PitScouting = () => {
   const [drivetrain, SetDrivetrain] = useState("");
   const [climbExists, setClimbExsists] = useState(false)
   const [shooterExists, setShooterExists] = useState(false)
+  const [team, setTeam] = useState("");
 
   const drivetraintype = (type) => {
     let selectedcolor = "#0782F9"
@@ -44,6 +45,7 @@ const PitScouting = () => {
     let obj = 
     [
     {
+      teamNum: team,
       visuals: Visualranking,
       drivetrainType: drivetrain, 
       climbExist: climbExists,
@@ -125,6 +127,15 @@ const PitScouting = () => {
             style = {styles.container}
             behavior = "padding" // try padding for ios maybe?
         >
+        
+        <TextInput
+                 placeholder = "Team #"
+                 keyboardType= "number-pad"
+                 value = {team}
+                 onChangeText = {text => setTeam(text)}
+                 style = {styles.Teaminput}                   
+         />
+        
       <Text style = {{alignSelf: 'center', marginTop: 20, fontSize: 30}}>
              ---- Visuals ----
          </Text>
@@ -300,7 +311,15 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     marginTop: 10, 
     marginRight: 15
-  } 
+  },
+  Teaminput: {
+    height: 50,
+    margin: 30,
+    borderWidth: 2,
+    padding: 10,
+    
+    
+},
 });
 
 export default PitScouting;
