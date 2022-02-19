@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, Switch, ScrollView } from 'react-native';
-import React, {useState} from 'react';
-import {AntDesign, Entypo} from "@expo/vector-icons"
+import React, { useState } from 'react';
+import { AntDesign, Entypo } from "@expo/vector-icons"
 import { Slider } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
 import { firebase } from '../firebase/config';
@@ -41,29 +41,23 @@ const DataCollect = () => {
     const [comments, setComments] = useState("");
 
     const handleTaxi = () => {
-        // alert(state)
-        setTaxi(taxiSwitch)
+        taxi === false ? setTaxi(true) : setTaxi(false);
         setTaxiSwitch(!taxiSwitch)
-        
-        alert("taxi: " + taxi)    
     }
     const handleHuman = () => {
-        // alert(state)
-        setHumanPlayer(!HumanPlayer)
-        
-        alert("human: " + HumanPlayer)    
+        HumanPlayer === false ? setHumanPlayer(true) : setHumanPlayer(false)
     }
 
     const handleCargoLower = (type) => {
         let setNum = autoLower;
-        if(type === "plus"){
+        if (type === "plus") {
             setNum++;
         }
-        else{
-            if(setNum>0){
+        else {
+            if (setNum > 0) {
                 setNum--;
             }
-            else{
+            else {
                 setAutoLower(setNum)
                 return;
             }
@@ -73,14 +67,14 @@ const DataCollect = () => {
 
     const handleCargoUpper = (type) => {
         let setNum = AutoUpper;
-        if(type === "plus"){
+        if (type === "plus") {
             setNum++;
         }
-        else{
-            if(setNum>0){
+        else {
+            if (setNum > 0) {
                 setNum--;
             }
-            else{
+            else {
                 setAutoUpper(setNum)
                 return;
             }
@@ -89,14 +83,14 @@ const DataCollect = () => {
     }
     const handleCargoLowerTele = (type) => {
         let setNum = TeleLower;
-        if(type === "plus"){
+        if (type === "plus") {
             setNum++;
         }
-        else{
-            if(setNum>0){
+        else {
+            if (setNum > 0) {
                 setNum--;
             }
-            else{
+            else {
                 setTeleLower(setNum)
                 return;
             }
@@ -105,14 +99,14 @@ const DataCollect = () => {
     }
     const handleCargoUpperTele = (type) => {
         let setNum = TeleUpper;
-        if(type === "plus"){
+        if (type === "plus") {
             setNum++;
         }
-        else{
-            if(setNum>0){
+        else {
+            if (setNum > 0) {
                 setNum--;
             }
-            else{
+            else {
                 setTeleUpper(setNum)
                 return;
             }
@@ -121,32 +115,32 @@ const DataCollect = () => {
     }
     const handleNumPenalities = (PenalityType, incOrdec) => {
         let setNum = 0
-        if(PenalityType === "tech"){
+        if (PenalityType === "tech") {
             setNum = techFoul;
         }
-        else if (PenalityType === "yellow"){
+        else if (PenalityType === "yellow") {
             setNum = YelloCard;
         }
-        else if(PenalityType === "red"){
+        else if (PenalityType === "red") {
             setNum = RedCard;
         }
 
-        if(incOrdec === "plus"){
+        if (incOrdec === "plus") {
             setNum++;
         }
         else {
-            if(setNum>0){
+            if (setNum > 0) {
                 setNum--;
             }
         }
 
-        if(PenalityType === "tech"){
+        if (PenalityType === "tech") {
             setTechFoul(setNum);
         }
-        else if (PenalityType === "yellow"){
+        else if (PenalityType === "yellow") {
             setYelloCard(setNum);
         }
-        else if(PenalityType === "red"){
+        else if (PenalityType === "red") {
             setRedCard(setNum);
         }
 
@@ -155,7 +149,7 @@ const DataCollect = () => {
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
 
-        if(type === "low"){
+        if (type === "low") {
             setHanger("low")
             setNoneColor("white")
             setLowColor(selectedColor)
@@ -163,7 +157,7 @@ const DataCollect = () => {
             setHighColor("white")
             setTreversalColor("white")
         }
-        if(type === "mid"){
+        if (type === "mid") {
             setHanger("mid")
             setNoneColor("white")
             setLowColor("white")
@@ -171,7 +165,7 @@ const DataCollect = () => {
             setHighColor("white")
             setTreversalColor("white")
         }
-        if(type === "high"){
+        if (type === "high") {
             setHanger("high")
             setNoneColor("white")
             setLowColor("white")
@@ -179,7 +173,7 @@ const DataCollect = () => {
             setHighColor(selectedColor)
             setTreversalColor("white")
         }
-        if(type === "t"){
+        if (type === "t") {
             setHanger("traversal")
             setNoneColor("white")
             setLowColor("white")
@@ -187,7 +181,7 @@ const DataCollect = () => {
             setHighColor("white")
             setTreversalColor(selectedColor)
         }
-        if(type === "none"){
+        if (type === "none") {
             setHanger("none")
             setNoneColor(selectedColor)
             setLowColor("white")
@@ -195,63 +189,61 @@ const DataCollect = () => {
             setHighColor("white")
             setTreversalColor("white")
         }
-        
+
     }
 
-    const handleDeactivation = (value) => {
+    const handleDeactivation = () => {
         // alert(value)
-        setIsDeactivated(isDeactivatedSwtich);
+        isDeactivated === false ? setIsDeactivated(true) : setIsDeactivated(false);
         setisDeactivatedSwtich(!isDeactivatedSwtich)
-        alert(isDeactivated)
     }
-    const handleDisqualify = (value) => {
+    const handleDisqualify = () => {
         // alert(value)
-        setIsDisqualified(isDisqualifiedSwitch);
-        setisDisqualifiedSwitch(!isDisqualifiedSwitch)
-        alert(isDisqualified)
+        isDisqualified === false ? setIsDisqualified(true) : setIsDisqualified(false);
+        setisDisqualifiedSwitch(!isDisqualifiedSwitch);
     }
 
     const handleModalConfirm = () => {
-        
-        if(match === ''){
+
+        if (match === '') {
             alert("enter the match number");
             return;
         }
-        if(Team === ''){
+        if (Team === '') {
             alert("enter the match number")
             return;
         }
-        if(hanger === ""){
+        if (hanger === "") {
             alert("select the climb type, select none if it didn't climb");
             return;
         }
 
-        let object = 
-        [
-        {
-            matchNum: match,
-            teamNum: Team,
-            taxi: taxi,
-            humanShot: HumanPlayer,
-            autoLowerCargo: autoLower,
-            autoUpperCargo: AutoUpper,
-            teleLowerCargo: TeleLower,
-            teleUpperCargo: TeleUpper,
-            climb: hanger,
-            drivetrainranking: Drivetrainranking,
-            defenseRanking: DefenseRanking,
-            redCard: RedCard,
-            yelloCard: YelloCard,
-            techFouls: techFoul,
-            deactivated: isDeactivated,
-            disqualified: isDisqualified,
-            extraComments: comments,
-        }
-    ]   
-    
+        let object =
+            [
+                {
+                    matchNum: match,
+                    teamNum: Team,
+                    taxi: taxi,
+                    humanShot: HumanPlayer,
+                    autoLowerCargo: autoLower,
+                    autoUpperCargo: AutoUpper,
+                    teleLowerCargo: TeleLower,
+                    teleUpperCargo: TeleUpper,
+                    climb: hanger,
+                    drivetrainranking: Drivetrainranking,
+                    defenseRanking: DefenseRanking,
+                    redCard: RedCard,
+                    yelloCard: YelloCard,
+                    techFouls: techFoul,
+                    deactivated: isDeactivated,
+                    disqualified: isDisqualified,
+                    extraComments: comments,
+                }
+            ]
+
         // object = addNewData(object)
         // console.log(object)
-        
+
         addNewData(object);
         handleModalCancel()
     }
@@ -288,10 +280,10 @@ const DataCollect = () => {
 
     const addNewData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-        .collection('data')
-        .doc('matchData')
-        .get()
-        
+            .collection('data')
+            .doc('matchData')
+            .get()
+
         let existingData = Object.values(Object.seal(documentSnapshot.data()))
         let finalList = existingData.concat(newList)
         let finalObject = Object.assign({}, finalList)
@@ -300,307 +292,317 @@ const DataCollect = () => {
             .collection('data')
             .doc('matchData')
             .set(finalObject)
-        
+
     }
 
-  return (
-    <>
-    <ScrollView>
-     <View style = {{backgroundColor: '#dedbd5'}}>
-         
-         <Text style = {{fontSize: 40, alignSelf: 'center'}}>data collection</Text>
-         <View style = {{flexDirection: 'row', alignSelf: 'center', marginTop: 50}}>
-         <TextInput
-                 placeholder = "Team #"
-                 keyboardType= "number-pad"
-                 value = {Team}
-                 onChangeText = {text => setTeam(text)}
-                 style = {styles.input}                   
-         />
-         <TextInput
-             placeholder = "Match #"
-             keyboardType="number-pad"
-             value = {match}
-             onChangeText = {text => setMatch(text)}
-             style = {styles.input1}                   
-         />
-         </View>
+    return (
+        <>
+            <ScrollView>
+                <View style={{ backgroundColor: '#dedbd5' }}>
 
-         <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30}}>
-             ----  Autonomous  ----
-         </Text>
+                    <Text style={{ fontSize: 40, alignSelf: 'center' }}>data collection</Text>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 50 }}>
+                        <TextInput
+                            placeholder="Team #"
+                            keyboardType="number-pad"
+                            value={Team}
+                            onChangeText={text => setTeam(text)}
+                            style={styles.input}
+                        />
+                        <TextInput
+                            placeholder="Match #"
+                            keyboardType="number-pad"
+                            value={match}
+                            onChangeText={text => setMatch(text)}
+                            style={styles.input1}
+                        />
+                    </View>
 
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
-             <Text style = {{fontSize: 25}}>Taxi: </Text>
-             {/* add human player shot*/}
-             <Switch
-                 style = {{position: 'absolute', bottom: -11, left: 60,}}
-                 trackColor={{ false: "grey", true: "grey" }}//#767577
-                 thumbColor={taxi ? "black" : "black"}//#f5dd4b
-                 ios_backgroundColor="#3e3e3e"
-                 onValueChange={handleTaxi}
-                 value={taxiSwitch}
-             />
-         </View>
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
-             <Text style = {{fontSize: 25}}>HumanPlayer Shot: </Text>
-             {/* add human player shot*/}
-                 <Switch
-                     style = {{position: 'absolute', bottom: -11, left: 220,}}
-                     trackColor={{ false: "grey", true: "grey" }}//#767577
-                     thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
-                     ios_backgroundColor="#3e3e3e"
-                     onValueChange={handleHuman}
-                     value={HumanPlayer}
-             />
-         </View>
-         
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
+                    <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
+                        ----  Autonomous  ----
+                    </Text>
 
-             <View>
-                 <Text style = {{fontSize: 25}}>CargoLower: </Text>
-             </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <Text style={{ fontSize: 25 }}>Taxi: </Text>
+                        {/* add human player shot*/}
+                        <Switch
+                            style={{ position: 'absolute', bottom: -11, left: 60, }}
+                            trackColor={{ false: "grey", true: "grey" }}//#767577
+                            thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={handleTaxi}
+                            value={taxiSwitch}
+                        />
+                    </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <Text style={{ fontSize: 25 }}>Human Player Shot: </Text>
+                        {/* add human player shot*/}
+                        <Switch
+                            style={{ position: 'absolute', bottom: -11, left: 220, }}
+                            trackColor={{ false: "grey", true: "grey" }}//#767577
+                            thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={handleHuman}
+                            value={HumanPlayer}
+                        />
+                    </View>
 
-             <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleCargoLower("other")}/>
-             <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-                 <Text>{autoLower}</Text>
-             </TouchableOpacity>
-             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleCargoLower('plus')}/>
-         </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
+                        <View>
+                            <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
+                        </View>
 
-         <View>
-             <Text style = {{fontSize: 25}}>CargoHigher: </Text>
-         </View>
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLower("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{autoLower}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLower('plus')} />
+                    </View>
 
-         <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleCargoUpper("other")}/>
-         <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-             <Text>{AutoUpper}</Text>
-         </TouchableOpacity>
-         <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleCargoUpper('plus')}/>
-         </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-         <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30}}>
-             ----  Teleop  ----
-         </Text>
+                        <View>
+                            <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
+                        </View>
 
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpper("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{AutoUpper}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpper('plus')} />
+                    </View>
 
-             <View>
-                 <Text style = {{fontSize: 25}}>CargoLower: </Text>
-             </View>
+                    <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
+                        ----  Teleop  ----
+                    </Text>
 
-             <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleCargoLowerTele("other")}/>
-             <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-                 <Text>{TeleLower}</Text>
-             </TouchableOpacity>
-             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleCargoLowerTele('plus')}/>
-         </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-         <View style = {{flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
+                        <View>
+                            <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
+                        </View>
 
-         <View>
-             <Text style = {{fontSize: 25}}>CargoHigher: </Text>
-         </View>
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLowerTele("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{TeleLower}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLowerTele('plus')} />
+                    </View>
 
-         <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleCargoUpperTele("other")}/>
-         <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-             <Text>{TeleUpper}</Text>
-         </TouchableOpacity>
-         <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleCargoUpperTele('plus')}/>
-         </View>
-         
-         <View style = {{alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
-             <Text style = {{fontSize: 25}}>Hanger: {hanger}</Text>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-             <View style = {{flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10}}>
+                        <View>
+                            <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
+                        </View>
 
-             <TouchableOpacity 
-                     style = {{backgroundColor: noneColor, 
-                     borderRadius: 5, 
-                     width: 50, height: 30, 
-                     marginRight: 10, marginTop: 10,
-                     justifyContent: 'center', alignItems: 'center'}}
-                     
-                     onPress={() => {handleHanger("none")}}
-                 >
-                     <Text>None</Text>
-                 </TouchableOpacity>
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpperTele("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{TeleUpper}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpperTele('plus')} />
+                    </View>
 
+                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
 
-                 <TouchableOpacity 
-                     style = {{backgroundColor: lowColor, 
-                     borderRadius: 5, 
-                     width: 50, height: 30, 
-                     marginRight: 10, marginTop: 10,
-                     justifyContent: 'center', alignItems: 'center'}}
-                     
-                     onPress={() => {handleHanger("low")}}
-                 >
-                     <Text>Low</Text>
-                 </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
 
-                 <TouchableOpacity 
-                     style = {{backgroundColor: midColor, 
-                     borderRadius: 5, 
-                     width: 50, height: 30, 
-                     marginRight: 10, marginTop: 10,
-                     justifyContent: 'center', alignItems: 'center'}}
-                 
-                     onPress={() => {handleHanger("mid")}}
-                 >
-                     <Text>Mid</Text>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: noneColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
 
-                 </TouchableOpacity>
-
-                 <TouchableOpacity 
-                     style = {{backgroundColor: highColor, 
-                     borderRadius: 5, 
-                     width: 50, height: 30, 
-                     marginRight: 10, marginTop: 10,
-                     justifyContent: 'center', alignItems: 'center'}}
-                 
-                     onPress={() => {handleHanger("high")}}
-                 >
-                     <Text>High</Text>
-                 </TouchableOpacity>
-
-                 <TouchableOpacity 
-                     style = {{backgroundColor: treversalColor, 
-                     borderRadius: 5, 
-                     width: 80, height: 30, 
-                     marginRight: 10, marginTop: 10,
-                     justifyContent: 'center', alignItems: 'center'}}
-                     
-                     onPress={() => {handleHanger("t")}}
-                 >
-                     <Text>Traversal</Text>
-                 </TouchableOpacity>
-
-             </View>
-         <Text style = {{alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30}}>
-             ---- Drivetrain ----
-         </Text>
-         <View style = {{marginTop: 40, alignContent: 'center', marginRight: 40}}> 
-         <Text style = {{fontSize: 25}}>Drivetrain ranking : {Drivetrainranking}</Text>
-         <Slider
-             value = {Drivetrainranking}
-             onValueChange = {(num) => {setDrivetrainranking(num)} }
-             minimumValue = {1}
-             maximumValue ={5}
-             step = {1}
-             onSlidingComplete = {(num) => {setDrivetrainranking(num)} }
-             allowTouchTrack
-             trackStyle = {{height : 10}}
-             thumbStyle = {{height : 20, width : 20, backgroundColor : "grey"}}
-         />
-         </View>
-         <View style = {{marginTop: 40, alignContent: 'center', marginRight: 40}}> 
-         <Text style = {{fontSize: 25}}>Defense ranking : {DefenseRanking}</Text>
-         <Slider
-             value = {DefenseRanking}
-             onValueChange = {(num) => {setDefenceRanking(num)} }
-             minimumValue = {1}
-             maximumValue ={5}
-             step = {1}
-             onSlidingComplete = {(num) => {setDefenceRanking(num)} }
-             allowTouchTrack
-             trackStyle = {{height : 10}}
-             thumbStyle = {{height : 20, width : 20, backgroundColor : "grey"}}
-         />
-         </View>
-         </View>
-         
-         <View style = {{alignSelf: 'flex-start', justifyContent: 'center',marginTop: 30, marginLeft: 45}}>
-             <Text style = {{alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30}}>
-                 ---- Penalities ----
-             </Text>
-             
-             <View style = {{flexDirection: 'row', marginTop: 30}}>
-                 <Text style = {{fontSize: 25}}>TechFoul: </Text>
-             
-
-             <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("tech", "minus")}/>
-             <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-                 <Text>{techFoul}</Text>
-             </TouchableOpacity>
-             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("tech", "plus")}/>
-             </View>
-
-             <View style = {{flexDirection: 'row', marginTop: 30}}>
-                 <Text style = {{fontSize: 25}}>YelloCards: </Text>
-             
-
-             <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("yellow", "minus")}/>
-             <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-                 <Text>{YelloCard}</Text>
-             </TouchableOpacity>
-             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("yellow", "plus")}/>
-             </View>
-
-             <View style = {{flexDirection: 'row', marginTop: 30}}>
-                 <Text style = {{fontSize: 25}}>RedCards: </Text>
-             
-
-             <AntDesign name='minus' size={35} color={'grey'} style = {{marginTop: 0, marginRight: 5}} onPress={() => handleNumPenalities("red", "minus")}/>
-             <TouchableOpacity style = {{backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center'}}>
-                 <Text>{RedCard}</Text>
-             </TouchableOpacity>
-             <AntDesign name='plus' size={35} color={'grey'} style = {{marginTop: 0, marginLeft: 5}} onPress={() => handleNumPenalities("red", "plus")}/>
-             </View>
-             
-             <View style = {{flexDirection: 'row', marginTop: 30}}>
-             <Text style = {{fontSize: 25, marginRight: 10}}>Deactivated: </Text>
-             {/* add human player shot*/}
-             <Switch
-                 style = {{position: 'absolute', bottom: -11, left: 140,}}
-                 trackColor={{ false: "grey", true: "grey" }}//#767577
-                 thumbColor={taxi ? "black" : "black"}//#f5dd4b
-                 ios_backgroundColor="#3e3e3e"
-                 value={isDeactivatedSwtich}
-                 onValueChange={(value) => {handleDeactivation(value)}}   
-             />
-             </View>
-
-             <View style = {{flexDirection: 'row', marginTop: 30}}>
-             <Text style = {{fontSize: 25, marginRight: 10}}>Disqualified: </Text>
-             {/* add human player shot*/}
-             <Switch
-                 style = {{position: 'absolute', bottom: -11, left: 140,}}
-                 trackColor={{ false: "grey", true: "grey" }}//#767577
-                 thumbColor={taxi ? "black" : "black"}//#f5dd4b
-                 ios_backgroundColor="#3e3e3e"
-                 value={isDisqualifiedSwitch}
-                 onValueChange={(value) => {handleDisqualify(value)}}   
-             />
-             </View>
-         </View>
-
-         <View style = {{alignSelf: 'center', justifyContent: 'center', marginTop: 60}}>
-             <Text style = {{fontSize: 30, alignSelf: 'center'}}>---- comments ----</Text>
+                                onPress={() => { handleHanger("none") }}
+                            >
+                                <Text>None</Text>
+                            </TouchableOpacity>
 
 
-             <TextInput
-                 placeholder = "exta comments"
-                 value = {comments}
-                 onChangeText = {text => setComments(text)}
-                 style = {styles.comments}
-                 multiline = {true}
-                                    
-             />
-             
-         </View>
-         <View style = {{flexDirection: 'row', alignSelf:'center', marginTop: 30}}>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: lowColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
 
-             <AntDesign name='close' size={45} color={'#0782F9'} style = {{marginRight: 60}} onPress={() => {handleModalCancel()}}/> 
-             <AntDesign name='check' size={45} color={'#0782F9'} style = {{marginLeft: 60}} onPress= {handleModalConfirm}/> 
-         </View>
-         
-     </View>
-     </ScrollView >
-     </>
-  )
+                                onPress={() => { handleHanger("low") }}
+                            >
+                                <Text>Low</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: midColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleHanger("mid") }}
+                            >
+                                <Text>Mid</Text>
+
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: highColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleHanger("high") }}
+                            >
+                                <Text>High</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: treversalColor,
+                                    borderRadius: 5,
+                                    width: 80, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleHanger("t") }}
+                            >
+                                <Text>Traversal</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                        <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30 }}>
+                            ---- Drivetrain ----
+                        </Text>
+                        <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
+                            <Text style={{ fontSize: 25 }}>Drivetrain ranking : {Drivetrainranking}</Text>
+                            <Slider
+                                value={Drivetrainranking}
+                                onValueChange={(num) => { setDrivetrainranking(num) }}
+                                minimumValue={1}
+                                maximumValue={5}
+                                step={1}
+                                onSlidingComplete={(num) => { setDrivetrainranking(num) }}
+                                allowTouchTrack
+                                trackStyle={{ height: 10 }}
+                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                            />
+                        </View>
+                        <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
+                            <Text style={{ fontSize: 25 }}>Defense ranking : {DefenseRanking}</Text>
+                            <Slider
+                                value={DefenseRanking}
+                                onValueChange={(num) => { setDefenceRanking(num) }}
+                                minimumValue={1}
+                                maximumValue={5}
+                                step={1}
+                                onSlidingComplete={(num) => { setDefenceRanking(num) }}
+                                allowTouchTrack
+                                trackStyle={{ height: 10 }}
+                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
+                            ---- Penalities ----
+                        </Text>
+
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <Text style={{ fontSize: 25 }}>TechFoul: </Text>
+
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("tech", "minus")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{techFoul}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("tech", "plus")} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <Text style={{ fontSize: 25 }}>YelloCards: </Text>
+
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("yellow", "minus")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{YelloCard}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("yellow", "plus")} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <Text style={{ fontSize: 25 }}>RedCards: </Text>
+
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("red", "minus")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{RedCard}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("red", "plus")} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <Text style={{ fontSize: 25, marginRight: 10 }}>Deactivated: </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ position: 'absolute', bottom: -11, left: 140, }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                value={isDeactivatedSwtich}
+                                onValueChange={handleDeactivation}
+                            />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <Text style={{ fontSize: 25, marginRight: 10 }}>Disqualified: </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ position: 'absolute', bottom: -11, left: 140, }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                value={isDisqualifiedSwitch}
+                                onValueChange={handleDisqualify}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{ alignSelf: 'center', justifyContent: 'center', marginTop: 60 }}>
+                        <Text style={{ fontSize: 30, alignSelf: 'center' }}>---- comments ----</Text>
+
+
+                        <TextInput
+                            placeholder="exta comments"
+                            value={comments}
+                            onChangeText={text => setComments(text)}
+                            style={styles.comments}
+                            multiline={true}
+
+                        />
+
+                    </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 30 }}>
+
+                        <AntDesign name='close' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { handleModalCancel() }} />
+                        <AntDesign name='check' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
+                    </View>
+
+                </View>
+            </ScrollView >
+        </>
+    )
 }
 
 export default DataCollect
@@ -609,10 +611,10 @@ export default DataCollect
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     ButtonsContainer: {
@@ -630,15 +632,15 @@ const styles = StyleSheet.create({
         fontWeight: '700'
     },
 
-    TitleStyle: {fontSize: 40, marginTop: 100},
+    TitleStyle: { fontSize: 40, marginTop: 100 },
     input: {
         backgroundColor: 'white',
         paddingHorizontal: 15,
         paddingVertical: 10,
         borderRadius: 10,
         marginTop: 5,
-        width: 100, 
-        marginRight: 30, 
+        width: 100,
+        marginRight: 30,
     },
     input1: {
         backgroundColor: 'white',
@@ -653,9 +655,18 @@ const styles = StyleSheet.create({
         height: 120,
         marginTop: 20,
         backgroundColor: 'white',
-        borderRadius: 10,     
+        borderRadius: 10,
         paddingHorizontal: 15,
-        paddingVertical: 10    
+        paddingVertical: 10
+    },
+    taxiButtons: {
+        backgroundColor: "white",
+        borderRadius: 5,
+        width: 50,
+        height: 30,
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 
-  });
+});
