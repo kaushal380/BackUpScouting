@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ScoutingApp",
+    "name": "Scouting App",
     "slug": "ScoutingApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,9 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "technotitans.scoutapp",
+      "buildNumber": "1.0.0"
     },
+    "description": "testing in progress",
     "android": {
+      "package": "technotitans.scoutapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -27,6 +31,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    }, 
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends"
+        }
+      ]
+    ]
   }
 }
