@@ -3,11 +3,11 @@ import { View, TouchableOpacity, StyleSheet, Text, Alert, Dimensions, Image } fr
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 
-export const CameraComponent = () => {
+export const CameraComponent = ({image, setImage}) => {
 
     //TODO: Multiple Photos? Record video functionality 
 
-    const [image, setImage] = useState(null);
+    // const [image, setImage] = useState(null);
     const [permission, setPermission] = useState(null);
     const [showCamera, setShowCamera] = useState(false);
 
@@ -87,9 +87,6 @@ export const CameraComponent = () => {
     } else {
         return normalView;
     }
-
-
-    
 }
 
 const styles = StyleSheet.create({
