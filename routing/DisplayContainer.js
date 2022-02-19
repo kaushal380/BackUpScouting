@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // importing pages
 import DisplayMenu from '../screens/DataDisplay/DisplayMenu';
 import Climb from '../screens/DataDisplay/Climb';
-import Shooting from '../screens/DataDisplay/Shooting';
+import Shooting from '../screens/DataDisplay/shooters/Shooting';
 import Defense from '../screens/DataDisplay/Defense';
 import Autonomous from '../screens/DataDisplay/Autonomous';
 
