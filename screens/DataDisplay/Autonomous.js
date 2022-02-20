@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput } from 'react-native'
 import React, { useState, useLayoutEffect } from 'react'
 import { firebase } from '../../firebase/config'
-import { SwipeListView } from 'react-native-swipe-list-view'
-import TeamSpecificData from './TeamSpecificData'
 
 const Autonomous = () => {
   const [finalData, setFinalData] = useState(null);
