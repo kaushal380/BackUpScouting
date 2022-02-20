@@ -13,7 +13,7 @@ const Home = () => {
     const clearFireBase = () => {
         firebaseAccess
             .collection('data')
-            .doc('matchData')
+            .doc('matchData') 
             .set({})
     }
     return(

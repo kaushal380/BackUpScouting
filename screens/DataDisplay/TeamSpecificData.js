@@ -345,18 +345,6 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             }
             let shooter = currentTeamObj.shooterExist
             let climb = currentTeamObj.climbExist
-            if(shooter){
-              shooter = "false"
-            }
-            else{
-              shooter="true"
-            }
-            if(climb){
-              climb = "false"
-            }
-            else{
-              climb = "true"
-            }
             console.log(shooter)
             console.log(climb)
             // console.log(currentTeamObj.img)
@@ -366,8 +354,8 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             setImage(currentTeamObj.img)
             // setImage("https://firebasestorage.googleapis.com/v0/b/scouting-1a932.appspot.com/o/IMG_20220215_224109.jpg?alt=media&token=8c88c57e-4fc3-4770-947e-25474b7b6d43")
             SetDrivetrain(currentTeamObj.drivetrainType)
-            setClimbExsists(shooter)
-            setShooterExists(climb)
+            setClimbExsists(climb)
+            setShooterExists(shooter)
             console.log(image)
           }
         
@@ -484,7 +472,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
     <Text style = {styles.pitScoutingData}>robot status:  {robotComments}</Text>
     <Text style = {styles.pitScoutingData}>gracious professionalism: {gracius}</Text>
     <Text style = {styles.pitScoutingData}>extra comments: {extraComments}</Text>
-    {/* <Text style = {styles.pitScoutingData}>image: {image}</Text> */}
+    <Text style = {styles.pitScoutingData}>image: </Text>
     <Image         
     source={{
         uri: image

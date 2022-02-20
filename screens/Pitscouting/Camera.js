@@ -6,7 +6,7 @@ import { Camera } from 'expo-camera';
 export const CameraComponent = ({image, setImage}) => {
 
     //TODO: Multiple Photos? Record video functionality 
-
+    let camera
     // const [image, setImage] = useState(null);
     const [permission, setPermission] = useState(null);
     const [showCamera, setShowCamera] = useState(false);
@@ -37,6 +37,7 @@ export const CameraComponent = ({image, setImage}) => {
 
     const takePhoto = async () => {
         const { uri } = await camera.takePictureAsync({ quality: 1 });
+        console.log(uri)
         setImage(uri);
     }
 
@@ -87,6 +88,9 @@ export const CameraComponent = ({image, setImage}) => {
     } else {
         return normalView;
     }
+
+
+    
 }
 
 const styles = StyleSheet.create({
