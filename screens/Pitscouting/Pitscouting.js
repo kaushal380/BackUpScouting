@@ -21,8 +21,8 @@ const PitScouting = () => {
   const [YesS, setYesS] = useState("white");
   const [NoS, setNoS] = useState("white");
   const [drivetrain, SetDrivetrain] = useState("");
-  const [climbExists, setClimbExsists] = useState(false)
-  const [shooterExists, setShooterExists] = useState(false)
+  const [climbExists, setClimbExsists] = useState("nope")
+  const [shooterExists, setShooterExists] = useState("nope")
   const [team, setTeam] = useState("");
   const [image, setImage] = useState();
   const [downloadUri, setDownloaduri] = useState("")
@@ -49,9 +49,10 @@ const PitScouting = () => {
       // const ref = ref(storage, 'image.png');
       let name = team + ".jpg"
       const reference = ref(storage, name)
-      const img = fetch(image);
-      const bytes = (await img).blob()
-      // await uploadBytes(reference, bytes);
+      // const img = await fetch(image);
+      // const bytes = 
+      const img = await fetch(image);
+      const bytes = await img.blob();
       await uploadBytesResumable(reference, bytes)
       url = (await getDownloadURL(reference)).toString()
       console.log(url)
@@ -107,12 +108,12 @@ const PitScouting = () => {
     if (type === "Yes") {
       setYesC(selectedcolor1)
       setNoC("white")
-      setClimbExsists(true)
+      setClimbExsists("yes")
     }
     if (type === "No") {
       setYesC("white")
       setNoC(selectedcolor1)
-      setClimbExsists(false)
+      setClimbExsists("nope")
     }
   }
   const checkShooter = (type) => {
@@ -120,12 +121,12 @@ const PitScouting = () => {
     if (type === "Yes") {
       setYesS(selectedcolor2)
       setNoS("white")
-      setShooterExists(true)
+      setShooterExists("yes")
     }
     if (type === "No") {
       setYesS("white")
       setNoS(selectedcolor2)
-      setShooterExists(false)
+      setShooterExists("nope")
     }
   }
 
