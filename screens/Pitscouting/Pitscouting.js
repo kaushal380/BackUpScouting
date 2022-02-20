@@ -6,8 +6,7 @@ import { AntDesign, Entypo } from "@expo/vector-icons"
 import { useNavigation } from '@react-navigation/core';
 import { firebase } from "../../firebase/config";
 import { CameraComponent } from "./Camera";
-import storage from '@react-native-firebase/storage';
-
+import {getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable} from 'firebase/storage'
 const PitScouting = () => {
   const navigation = useNavigation();
   const firebaseAccess = firebase.firestore();
@@ -26,6 +25,7 @@ const PitScouting = () => {
   const [shooterExists, setShooterExists] = useState(false)
   const [team, setTeam] = useState("");
   const [image, setImage] = useState();
+  const [downloadUri, setDownloaduri] = useState("")
   const drivetraintype = (type) => {
     let selectedcolor = "#0782F9"
 
@@ -42,15 +42,27 @@ const PitScouting = () => {
     }
   }
 
-  const handlePitSubmit = () => {
-    let settingImage = image
-    if(!image){
-      settingImage = "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FScoutingApp-de46bf89-ab06-4c66-b72d-b28b498bd725/Camera/b7ea4f5d-2afe-42ba-9a6c-7bbb0d1bc8b1.jpg"
-    }
+  const handlePitSubmit = async() => {
+    let url = ""
+    try{
+      const storage = getStorage();
+      // const ref = ref(storage, 'image.png');
+      let name = team + ".jpg"
+      const reference = ref(storage, name)
+      const img = fetch(image);
+      const bytes = (await img).blob()
+      // await uploadBytes(reference, bytes);
+      await uploadBytesResumable(reference, bytes)
+      url = (await getDownloadURL(reference)).toString()
+      console.log(url)
+      }
+      catch(e){
+        console.log(e)
+      }
     let obj = 
     [
     {
-      img: settingImage,
+      img: url,
       teamNum: team,
       visuals: Visualranking,
       drivetrainType: drivetrain, 
@@ -70,6 +82,10 @@ const PitScouting = () => {
     navigation.navigate('Home');
   }
 
+  const addImage = async () => {
+
+
+  }
   const addNewData = async (newList) => {
     const documentSnapshot = await firebase.firestore()
       .collection('data')

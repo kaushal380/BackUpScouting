@@ -359,19 +359,22 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             }
             console.log(shooter)
             console.log(climb)
+            // console.log(currentTeamObj.img)
             setRobotComments(currentTeamObj.robotStatus)
             setGracius(currentTeamObj.graciousProfessionalism)
             setExtraComments(currentTeamObj.extraComments)
             setImage(currentTeamObj.img)
+            // setImage("https://firebasestorage.googleapis.com/v0/b/scouting-1a932.appspot.com/o/IMG_20220215_224109.jpg?alt=media&token=8c88c57e-4fc3-4770-947e-25474b7b6d43")
             SetDrivetrain(currentTeamObj.drivetrainType)
             setClimbExsists(shooter)
             setShooterExists(climb)
+            console.log(image)
           }
         
 
   return (
     <ScrollView>
-    <View style = {styles.container}>
+    <View style = {styles.container} >
       <Text style = {{fontSize: 40, alignSelf: 'center', marginVertical: 30, color: '#0782F9', fontWeight: 'bold'}}>Team specific data</Text>
       <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 20, marginBottom: 20, fontWeight: '900'}}>team number: {currentTeam}</Text>
       <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900'}}>teleop data: </Text>
@@ -482,7 +485,11 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
     <Text style = {styles.pitScoutingData}>gracious professionalism: {gracius}</Text>
     <Text style = {styles.pitScoutingData}>extra comments: {extraComments}</Text>
     {/* <Text style = {styles.pitScoutingData}>image: {image}</Text> */}
-    <Image source={image} style = {{height: 200}}></Image>
+    <Image         
+    source={{
+        uri: image
+    }}
+    style = {{height: 400, width: 350}}></Image>
     <Text style = {{fontSize: 40, marginTop: 30}}>Print raw</Text>
     <Text style = {{fontSize: 40}} onPress={closeModal}>close Modal</Text>
     </View>
