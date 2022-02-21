@@ -1,117 +1,281 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput } from 'react-native'
-import React, { useState, useLayoutEffect } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native'
+import React, {useState, useLayoutEffect, useEffect} from 'react'
+import { SwipeListView } from 'react-native-swipe-list-view'
 import { firebase } from '../../firebase/config'
+import TeamSpecificData from './TeamSpecificData';
 
 const Autonomous = () => {
-  const [finalData, setFinalData] = useState(null);
-  const [keyword, setKeyword] = useState("");
 
-  useLayoutEffect(() => { getEverything() }, []);
+  const [rawData, setRawData] = useState([])
+  const [PointsColor, setPointsColor] = useState("white");
+  const [UpperColor, setUpperColor] = useState("white");
+  const [LowerColor, setLowerColor] = useState("white");
+  const [autoList, setAutoList] = useState()
+  const [isModalVisible, setModal] = useState(false);
+  const [currentTeam, setCurrentTeam] = useState();
 
-  const getEverything = async () => {
+  const getDBData = async () => {
     const documentSnapshot = await firebase.firestore()
-      .collection('data')
-      .doc('matchData')
-      .get()
+    .collection('data')
+    .doc('matchData')
+    .get()
 
-    let raw = Object.values(Object.seal(documentSnapshot.data()));
-
-    let teams = [];
-    for (let i = 0; i < raw.length; i++) {
-      teams.push(raw[i].teamNum);
-    }
-    teams = [...new Set(teams)];
-    let finalData = []
-    //Create an object. Team number: matches they played, another team number: matches they played ...
-    for (let team of teams) {
-      let data = { team: 0, matches: [], AutoUpperCargo: 0, AutoLowerCargo: 0, avg: 0, taxi: false };
-      let matches = [];
-      let totalUpper = 0;
-      let totalLower = 0;
-      for (let i in raw) {
-        if (team === raw[i].teamNum) {
-          data.team = raw[i].teamNum;
-          matches.push(raw[i].matchNum);
-          totalUpper += raw[i].autoUpperCargo;
-          totalLower += raw[i].autoLowerCargo;
-          data.taxi = raw[i].taxi;
-        }
-        data.taxi ? data.avg = ((totalUpper * 4) + (totalLower * 2) + 2) / matches.length : data.avg = ((totalUpper * 4) + (totalLower * 2)) / matches.length
-      }
-
-      data.AutoLowerCargo = totalLower;
-      data.AutoUpperCargo = totalUpper;
-      data.matches = matches;
-      finalData.push(data);
-    }
-    setFinalData(finalData);
+    let raw = Object.values(Object.seal(documentSnapshot.data()))
+    setRawData(raw);
   }
 
-  if (finalData === null) {
-    return <Text>Loading...</Text>
-  } else {
-    let data = finalData;
-    data = data.filter(element => {
-      return element.team.includes(keyword)
-    })
-    data.sort(function (a, b) {
-      if (a.avg > b.avg) {
-        return -1;
+  const handleSortType = (type) => {
+    let selectedColor = "#0782F9"
+    let selectedType = ""
+    if(type === "lower"){
+        selectedType = "lower"
+        setLowerColor(selectedColor)
+        setUpperColor("white")
+        setPointsColor("white")
+    }
+    if(type === "upper"){
+        selectedType = "upper"
+        setUpperColor(selectedColor)
+        setLowerColor("white")
+        setPointsColor("white")
+    }
+    if(type === "points"){
+        selectedType = "points"
+        setUpperColor("white")
+        setLowerColor("white")
+        setPointsColor(selectedColor)
+    }
+    setVisibleList(selectedType);
+  }
+  const getFilteredTeamData = (team) => {
+    let raw = rawData;
+    let filteredTeamData = []
+    for (let index = 0; index < raw.length; index++) {
+      if(raw[index].teamNum === team){
+        filteredTeamData = [...filteredTeamData, raw[index]]
       }
-      if (b.avg > a.avg) {
-        return 1;
+    }
+    return filteredTeamData;
+  }
+
+  const getMatches = (team) => {
+    let raw = rawData;
+    let matches = []
+    for (let index = 0; index < raw.length; index++) {
+      if(raw[index].teamNum === team){
+        matches = [...matches, raw[index].matchNum]
       }
-      return 0;
-    })
-      
-    return (
-      <SafeAreaView style={styles.container}>
-        <TextInput style={styles.textInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
-        <ScrollView>
-          {
-            data.map((element) =>
-              <View style={styles.item}>
-                <Text style={styles.text}>
-                  Team: {element.team}
-                  {"\n"}
-                  Matches Participated In: {`${element.matches}`}
-                  {"\n"}
-                  Number of Upper Cargo Shots: {element.AutoUpperCargo}
-                  {"\n"}
-                  Number of Lower Cargo Shots: {element.AutoLowerCargo}
-                  {"\n"}
-                  Taxi: {`${element.taxi}`}
-                  {"\n"}
-                  Average Points: {element.avg}
-                </Text>
-              </View>
-            )
+    }
+    matches = [...new Set(matches)];
+    return matches;
+  }
+
+  const setVisibleList = (type) => {
+    let getAssignedObjects = assignAutoObjects();
+    let avgPoints = []
+    let avgLower = []
+    let avgUpper = []
+    let finalList = []
+    for (let index = 0; index < getAssignedObjects.length; index++) {
+        avgPoints = [...avgPoints, getAssignedObjects[index].pointsScored]
+        avgLower = [...avgLower, getAssignedObjects[index].lowerGoal]
+        avgUpper = [...avgUpper, getAssignedObjects[index].upperGoal]
+    }
+
+    avgPoints = avgPoints.sort(function(a, b){return b-a});
+    avgPoints = [... new Set(avgPoints)];
+    avgLower = avgLower.sort(function(a,b) {return b-a});
+    avgLower = [... new Set(avgLower)];
+    avgUpper = avgUpper.sort(function(a, b){return b-a});
+    avgUpper = [... new Set(avgUpper)];
+
+    if(type === "points"){
+        avgPoints.forEach(element => {
+            getAssignedObjects.forEach(i => {
+                if(element === i.pointsScored){
+                    finalList = [...finalList, i];
+                }
+            })
+        });
+    }
+    if(type === "upper"){
+        avgUpper.forEach(element => {
+            getAssignedObjects.forEach(i => {
+                if(element === i.upperGoal){
+                    finalList = [...finalList, i];
+                }
+            })
+        });
+    }
+    if(type === "lower"){
+        avgLower.forEach(element => {
+            getAssignedObjects.forEach(i => {
+                if(element === i.lowerGoal){
+                    finalList = [...finalList, i];
+                }
+            })
+        });
+    }
+    setAutoList(finalList)
+    // console.log(autoList)
+  }
+
+  const assignAutoObjects = () => {
+      getDBData();
+      let raw = rawData;
+      let teams = []
+
+      for (let index = 0; index < raw.length; index++) {
+          teams = [...teams, raw[index].teamNum];
+      }
+      teams = [... new Set(teams)];
+      let assignedOgbjects = []
+      for (let index = 0; index < teams.length; index++) {
+          let team = teams[index]
+          let filteredTeamData = getFilteredTeamData(team)
+          let matches = getMatches(team)
+          
+          let TotalLower = 0
+          let TotalUpper = 0
+          let totalTaxi = 0;
+          let counter = 0
+          let points = 0
+
+          for (let index = 0; index < filteredTeamData.length; index++) {
+              TotalLower = TotalLower + filteredTeamData[index].autoLowerCargo;
+              TotalUpper = TotalUpper + filteredTeamData[index].autoUpperCargo;
+              counter++;
           }
-        </ScrollView>
-      </SafeAreaView>
-    )
+          let averageLower = TotalLower/counter;
+          let averageUpper = TotalUpper/counter;
+
+          for (let index = 0; index < matches.length; index++) {
+              let taxiYesCounter = 0;
+              let taxiNoCounter = 0;
+              for(let i = 0; i < filteredTeamData.length; i++){
+                if(filteredTeamData[i].taxi){
+                    taxiYesCounter++;
+                }
+                else{
+                    taxiNoCounter++;
+                }
+              }
+              if(taxiYesCounter>taxiNoCounter){
+                  totalTaxi++;
+              }    
+          }
+
+          points = (averageLower*2) + (averageUpper*4);
+          let taxiPoints = (totalTaxi/(matches.length)) * 2;
+          points = points + taxiPoints;
+
+          let obj = {
+              team: team,
+              upperGoal: averageUpper,
+              lowerGoal: averageLower,
+              taxi: totalTaxi,
+              pointsScored: points,
+          }
+          assignedOgbjects = [...assignedOgbjects, obj];
+      }
+
+    //   console.log(assignedOgbjects)
+      return assignedOgbjects;
   }
+  const handleOpenModal = (selectedTeam) => {
+    setCurrentTeam(selectedTeam)
+    setModal(true)
+  }
+  return (
+    <View style = {styles.container}>
+        <View style = {styles.sortBar}>
+            <Text style = {{fontSize: 35}}>sort: </Text>
+            <TouchableOpacity 
+                style = {{backgroundColor: PointsColor, 
+                borderRadius: 5, 
+                width: 80, height: 40, 
+                marginRight: 10, marginTop: 7,
+                justifyContent: 'center', alignItems: 'center'}}
+                
+                onPress={() => {handleSortType("points")}}
+            >
+                <Text>points</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+                style = {{backgroundColor: UpperColor, 
+                borderRadius: 5, 
+                width: 80, height: 40, 
+                marginRight: 10, marginTop: 7,
+                justifyContent: 'center', alignItems: 'center'}}
+                
+                onPress={() => {handleSortType("upper")}}
+            >
+                <Text>upper cargo</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+                style = {{backgroundColor: LowerColor, 
+                borderRadius: 5, 
+                width: 80, height: 40, 
+                marginRight: 10, marginTop: 7,
+                justifyContent: 'center', alignItems: 'center'}}
+                
+                onPress={() => {handleSortType("lower")}}
+            >
+                <Text>lower cargo</Text>
+            </TouchableOpacity>
+        </View>
+        <SwipeListView 
+            data = {autoList}
+            
+            renderItem = {(data) => {
+            return(
+                <TouchableOpacity
+                    style = {styles.ListView}
+                    onPress = {() => {handleOpenModal(data.item.team)}}
+                >
+                    <>
+                        <Text style = {{fontSize: 20, color: 'white'}}>team Number: {data.item.team}</Text>
+                        <Text>average points: {data.item.pointsScored}</Text>
+                        <Text>average upper shots: {data.item.upperGoal}</Text>
+                        <Text>average lower shots: {data.item.lowerGoal}</Text>
+                        <Text>total taxi: {data.item.taxi}</Text>
+                        
+                    </>
+                </TouchableOpacity>
+            )
+            }}
+        />
+        <Modal visible = {isModalVisible}>
+            <TeamSpecificData 
+            setModal={ setModal}
+            rawData = { rawData}
+            currentTeam = {currentTeam} 
+            />
+        </Modal>
+    </View>
+  )
 }
 
 export default Autonomous
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#E8F1F2"
-  },
-  item: {
-    backgroundColor: '#A8A6DE',
-    padding: 20,
-    margin: 20, 
-    borderRadius: 20
-  },
-  text: {
-    fontSize: 14,
-  },
-  textInput: {
-    borderWidth: 2,
-    margin: 20,
-    height: 25,
-  }
+    container: {
+        marginLeft: 20
+    },
+    sortBar: {
+        flexDirection: 'row', 
+        marginVertical: 20, 
+        justifyContent: 'space-evenly'
+    },
+    ListView: {
+        backgroundColor: '#0782F9',
+        minHeight: 105,
+        width: 350,
+        padding: 15,
+        justifyContent: 'space-around',
+        marginBottom: 10,
+        borderRadius: 10
+        }
 })

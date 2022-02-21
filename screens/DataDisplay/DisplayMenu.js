@@ -1,20 +1,39 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/core';
 
 const DisplayMenu = () => {
     const navigation = useNavigation();
   return (
+    <ScrollView>
     <View style = {styles.container}>
       <Text style = {styles.title}>View teams based on: </Text>
 
     <View style = {styles.buttonView}>
+    <TouchableOpacity
+            style = {styles.ButtonsContainerAllTeams}
+            onPress = {() => {navigation.navigate('allTeams')}}
+        >
+            <Text style = {styles.Buttontext}>
+                All teams
+            </Text>
+    </TouchableOpacity>
+
       <TouchableOpacity
             style = {styles.ButtonsContainer}
             onPress = {() => {navigation.navigate('Shooting')}}
         >
             <Text style = {styles.Buttontext}>
                 Best Shooters
+            </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+            style = {styles.ButtonsContainer}
+            onPress = {() => {navigation.navigate('auto')}}
+        >
+            <Text style = {styles.Buttontext}>
+                Best Autonomous
             </Text>
         </TouchableOpacity>
 
@@ -35,17 +54,10 @@ const DisplayMenu = () => {
                 Best climb
             </Text>
         </TouchableOpacity>
+    </View>
+    </View>
+    </ScrollView>
 
-        <TouchableOpacity
-            style = {styles.ButtonsContainer}
-            onPress = {() => {navigation.navigate('Auto')}}
-        >
-            <Text style = {styles.Buttontext}>
-                Best Autonomous
-            </Text>
-        </TouchableOpacity>
-    </View>
-    </View>
   )
 }
 
@@ -72,6 +84,15 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 10,
         marginTop: 20
+    },
+    ButtonsContainerAllTeams: {
+        backgroundColor: "#0782F9",
+        width: 350,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 100,
+        borderRadius: 10,
+        marginBottom: 60
     },
     Buttontext: {
         color: 'white',

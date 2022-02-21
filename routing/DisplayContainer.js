@@ -7,6 +7,7 @@ import Climb from '../screens/DataDisplay/Climb';
 import Shooting from '../screens/DataDisplay/shooters/Shooting';
 import Defense from '../screens/DataDisplay/Defense';
 import Autonomous from '../screens/DataDisplay/Autonomous';
+import AllTeamData from '../screens/DataDisplay/AllTeamData';
 
 const Stack = createNativeStackNavigator();
 const DisplayContainer = () => {
@@ -16,7 +17,8 @@ const DisplayContainer = () => {
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Shooting'}} name = "Shooting" component = {Shooting} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Defense'}} name = "Defense" component = {Defense} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Climb'}} name = "Climb" component = {Climb} />
-      <Stack.Screen options = {{headerShown: true, headerTitle: 'Autonomous'}} name = "Auto" component = {Autonomous} />
+      <Stack.Screen options = {{headerShown: true, headerTitle: 'All teams'}} name = "allTeams" component = {AllTeamData} />
+      <Stack.Screen options = {{headerShown: true, headerTitle: 'Autonomous'}} name = "auto" component = {Autonomous} />
     </Stack.Navigator>
   
   )
