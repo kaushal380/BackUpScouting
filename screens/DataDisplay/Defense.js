@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { firebase } from '../../firebase/config'
 import { SwipeListView } from 'react-native-swipe-list-view'
@@ -9,6 +9,7 @@ const Defense = () => {
   const [rawData, setRawData] = useState([])
   const [isTeamDataVisible, setTeamDataVisible] = useState(false)
   const [currentSelectedTeam, setSelectedTeam] = useState();
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     sortTeams()
@@ -76,14 +77,26 @@ const Defense = () => {
   const closeModal = () => {
     setTeamDataVisible(false)
   }
+
+  if(finalDefenseList === null){
+    return <Text>loading items...</Text>
+  } else {
+    let data = finalDefenseList;
+    data = data.filter(element => {
+      let key = keyword;
+      let length = key.length;
+      return element.team.substring(0, length).includes(keyword)
+    })
+
   return (
 
     <View style = {styles.container}>
       <Text style = {{fontSize: 25, marginHorizontal: 20, marginVertical: 20,alignSelf: 'flex-start'}}>
         Sorting Defense Teams
       </Text>
+      <TextInput style={styles.SearchtextInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
           <SwipeListView 
-            data = {finalDefenseList}
+            data = {data}
             
             renderItem = {(data) => {
             return(
@@ -113,6 +126,7 @@ const Defense = () => {
       </Modal>
     </View>
   )
+  }
 }
 
 export default Defense
@@ -131,5 +145,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: 10,
     borderRadius: 10
+    },
+    SearchtextInput: {
+      borderWidth: 2,
+      marginBottom: 20, 
+      marginHorizontal: 20,
+      width: 300,
+      height: 45,
+      padding: 10,
+      alignSelf: 'flex-start'
     }
 })

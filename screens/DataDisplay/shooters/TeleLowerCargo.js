@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { firebase } from '../../../firebase/config';
 import { SwipeListView } from 'react-native-swipe-list-view'
@@ -6,11 +6,12 @@ import TeamSpecificData from '../TeamSpecificData';
 
 const TeleLowerCargo = () => {
   const [rawData, setRawData] = useState([]);
-  const [list, setList] = useState();
+  const [list, setList] = useState([]);
   const [averageColor, setAverageColor] = useState("white");
   const [ConsistencyColor, setConsistencyColor] = useState("white");
   const [isTeamDataVisible, setTeamDataVisible] = useState(false)
   const [currentSelectedTeam, setSelectedTeam] = useState();
+  const [keyword, setKeyword] = useState("");
 
   const handleSortType = (type) => {
     let selectedColor = "#0782F9"
@@ -164,7 +165,18 @@ const TeleLowerCargo = () => {
     setSelectedTeam(team)
     setTeamDataVisible(true)
   }
+  if(list === null){
+    return <Text>Loading items...</Text>
+  }
+  else{
+    let data = []
+    data = list
+    data = data.filter(element => {
 
+      let key = keyword;
+      let length = key.length;
+      return element.team.substring(0, length).includes(keyword)
+    })
   return (
     <View style = {styles.container}>
       <View style = {{flexDirection: 'row', marginTop: 20}}>
@@ -193,9 +205,9 @@ const TeleLowerCargo = () => {
           <Text>consistency</Text>
       </TouchableOpacity>
       </View>
-
+      <TextInput style={styles.SearchtextInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
       <SwipeListView 
-            data = {list}
+            data = {data}
             
             renderItem = {(data) => {
             return(
@@ -224,6 +236,7 @@ const TeleLowerCargo = () => {
       </Modal>
     </View>
   )
+  }
 }
 
 export default TeleLowerCargo
@@ -240,5 +253,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: 10,
     borderRadius: 10
+    },
+    SearchtextInput: {
+      borderWidth: 2,
+      marginVertical: 20, 
+      width: 300,
+      height: 45,
+      padding: 10,
+      alignSelf: 'flex-start'
     }
 })

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Modal, ScrollView, TextInput } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { firebase } from '../../firebase/config'
 import { SwipeListView } from 'react-native-swipe-list-view'
@@ -16,7 +16,8 @@ const Climb = () => {
   const [midColor, setMidColor] = useState("white");
   const [highColor, setHighColor] = useState("white");
   const [traversalColor, setTreversalColor] = useState("white");
-  const [climbList, setClimbList] = useState();
+  const [climbList, setClimbList] = useState([]);
+  const [keyword, setKeyword] = useState("");
   
 
   const handleSortType = (type) => {
@@ -263,8 +264,18 @@ const Climb = () => {
     setSelectedTeam(team)
     setTeamDataVisible(true)
   }
-  
 
+  if(climbList === null){
+    return <Text>Loading items...</Text>
+  }
+  else{
+    let data = []
+    data = climbList;
+    data = data.filter(element => {
+      let key = keyword;
+      let length = key.length;
+      return element.team.substring(0, length).includes(keyword)
+    })
   return (
     
     <View style = {styles.container}>
@@ -319,8 +330,9 @@ const Climb = () => {
       </TouchableOpacity>
 
       </View>
+      <TextInput style={styles.SearchtextInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
       <SwipeListView 
-            data = {climbList}
+            data = {data}
             
             renderItem = {(data) => {
             return(
@@ -354,6 +366,7 @@ const Climb = () => {
     
 
   )
+  }
 }
 
 export default Climb
@@ -370,5 +383,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginBottom: 10,
     borderRadius: 10
+    },
+    SearchtextInput: {
+      borderWidth: 2,
+      marginVertical: 20, 
+      width: 300,
+      height: 45,
+      padding: 10,
+      
     }
 })

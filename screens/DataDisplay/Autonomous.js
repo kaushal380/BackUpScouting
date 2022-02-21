@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native'
 import React, {useState, useLayoutEffect, useEffect} from 'react'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { firebase } from '../../firebase/config'
@@ -10,9 +10,10 @@ const Autonomous = () => {
   const [PointsColor, setPointsColor] = useState("white");
   const [UpperColor, setUpperColor] = useState("white");
   const [LowerColor, setLowerColor] = useState("white");
-  const [autoList, setAutoList] = useState()
+  const [autoList, setAutoList] = useState([])
   const [isModalVisible, setModal] = useState(false);
   const [currentTeam, setCurrentTeam] = useState();
+  const [keyword, setKeyword] = useState("");
 
   const getDBData = async () => {
     const documentSnapshot = await firebase.firestore()
@@ -186,6 +187,17 @@ const Autonomous = () => {
     setCurrentTeam(selectedTeam)
     setModal(true)
   }
+  if(autoList === null){
+      return <Text>Loading items...</Text>
+  }
+  else {
+      let data = []
+      data = autoList;
+      data = data.filter(element => {
+        let key = keyword;
+        let length = key.length;
+        return element.team.substring(0, length).includes(keyword)
+      })
   return (
     <View style = {styles.container}>
         <View style = {styles.sortBar}>
@@ -226,8 +238,9 @@ const Autonomous = () => {
                 <Text>lower cargo</Text>
             </TouchableOpacity>
         </View>
+        <TextInput style={styles.SearchtextInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
         <SwipeListView 
-            data = {autoList}
+            data = {data}
             
             renderItem = {(data) => {
             return(
@@ -256,6 +269,7 @@ const Autonomous = () => {
         </Modal>
     </View>
   )
+  }
 }
 
 export default Autonomous
@@ -277,5 +291,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginBottom: 10,
         borderRadius: 10
-        }
+        },
+    SearchtextInput: {
+        borderWidth: 2,
+        marginBottom: 20,
+        width: 300,
+        height: 45,
+        padding: 10,   
+    }
 })
