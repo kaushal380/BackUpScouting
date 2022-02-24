@@ -28,7 +28,8 @@
     "react-native-elements": "^3.4.2",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
-    "react-native-web": "0.17.1"
+    "react-native-web": "0.17.1",
+    "expo-sqlite": "~10.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -4,6 +4,8 @@ import { AntDesign, Entypo } from "@expo/vector-icons"
 import { Slider } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
 import { firebase } from '../firebase/config';
+import * as SQLite from 'expo-sqlite';
+
 
 const DataCollect = () => {
     const firebaseAccess = firebase.firestore()
@@ -25,6 +27,13 @@ const DataCollect = () => {
     const [highColor, setHighColor] = useState("white")
     const [treversalColor, setTreversalColor] = useState("white")
     const [noneColor, setNoneColor] = useState("white")
+
+    const [shootLocation, setShootLocation] = useState([]);
+    const [shootLocationText, setShootLocationText] = useState("");
+    const [nearColor, setNearColor] = useState("white");
+    const [middleColor, setMiddleColor] = useState("white");
+    const [farColor, setFarColor] = useState("white");
+    const [anyColor, setAnyColor] = useState("white");
 
     const [Drivetrainranking, setDrivetrainranking] = useState(1);
     const [DefenseRanking, setDefenceRanking] = useState(1);
@@ -146,6 +155,80 @@ const DataCollect = () => {
 
     }
 
+    const handleShootLocation = (type) => {
+        let selectedColor = "#0782F9";
+        let currentList = shootLocation;
+        if(type === "near"){
+            if(currentList.includes("anywhere", 0)){
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index,1);
+            }
+            if(nearColor === "white"){
+                setNearColor(selectedColor);
+                currentList = [...currentList, "near"];
+            }
+            else if(nearColor === selectedColor){
+                setNearColor("white");
+                const index = currentList.findIndex((item) => item === "near")
+                currentList.splice(index,1);
+            }
+        }
+        if(type === "middle"){
+            if(currentList.includes("anywhere", 0)){
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index,1);
+            }
+            if(middleColor === "white"){
+                setMiddleColor(selectedColor);
+                currentList = [...currentList, "middle"];
+            }
+            else if(middleColor === selectedColor){
+                setMiddleColor("white");
+                const index = currentList.findIndex((item) => item === "middle");
+                currentList.splice(index,1);
+            }
+        }
+        if(type === "far"){
+            if(currentList.includes("anywhere", 0)){
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index,1);
+            }
+            if(farColor === "white"){
+                setFarColor(selectedColor);
+                currentList = [...currentList, "far"];
+            }
+            else if(farColor === selectedColor){
+                setFarColor("white");
+                const index = currentList.findIndex((item) => item === "far");
+                currentList.splice(index,1);
+            }
+        }
+        if(type === "any"){
+            if(anyColor === "white"){
+                currentList = ["anywhere"];
+                setAnyColor(selectedColor);
+                setNearColor("white");
+                setMiddleColor("white");
+                setFarColor("white");
+            }
+            else if(anyColor === selectedColor){
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index,1);
+            }
+        }
+       console.log(currentList);
+       setShootLocation(currentList);
+
+       let textVersion = "";
+       currentList.forEach(element => {
+           textVersion = textVersion + element + ", "
+       });
+       setShootLocationText(textVersion);
+    } 
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
 
@@ -217,6 +300,10 @@ const DataCollect = () => {
             alert("select the climb type, select none if it didn't climb");
             return;
         }
+        if(shootLocationText === ""){
+            alert("select shooting location");
+            return;
+        }
 
         let object =
             [
@@ -229,6 +316,7 @@ const DataCollect = () => {
                     autoUpperCargo: AutoUpper,
                     teleLowerCargo: TeleLower,
                     teleUpperCargo: TeleUpper,
+                    shootingLocations: shootLocationText,
                     climb: hanger,
                     drivetrainranking: Drivetrainranking,
                     defenseRanking: DefenseRanking,
@@ -402,6 +490,69 @@ const DataCollect = () => {
                         </TouchableOpacity>
                         <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpperTele('plus')} />
                     </View>
+
+                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                    <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
+                        <TouchableOpacity
+                                style={{
+                                    backgroundColor: nearColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleShootLocation("near") }}
+                            >
+                                <Text>near</Text>
+                            </TouchableOpacity>
+
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: middleColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleShootLocation("middle") }}
+                            >
+                                <Text>middle</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: farColor,
+                                    borderRadius: 5,
+                                    width: 50, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleShootLocation("far") }}
+                            >
+                                <Text>far</Text>
+
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: anyColor,
+                                    borderRadius: 5,
+                                    width: 80, height: 30,
+                                    marginRight: 10, marginTop: 10,
+                                    justifyContent: 'center', alignItems: 'center'
+                                }}
+
+                                onPress={() => { handleShootLocation("any") }}
+                            >
+                                <Text>anywhere</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View> 
 
                     <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
                         <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
