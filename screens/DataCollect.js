@@ -5,7 +5,7 @@ import { Slider } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
 import { firebase } from '../firebase/config';
 import * as SQLite from 'expo-sqlite';
-
+const db = SQLite.openDatabase("scoutingApp.db");
 
 const DataCollect = () => {
     const firebaseAccess = firebase.firestore()
@@ -48,6 +48,16 @@ const DataCollect = () => {
 
     const [outcome, setOutcome] = useState("");
     const [comments, setComments] = useState("");
+
+    const createTable = () => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "CREATE TABLE IF NOT EXISTS "
+                +"dataCollect "
+                +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+            )
+        })
+    }
 
     const handleTaxi = () => {
         taxi === false ? setTaxi(true) : setTaxi(false);
@@ -228,7 +238,7 @@ const DataCollect = () => {
            textVersion = textVersion + element + ", "
        });
        setShootLocationText(textVersion);
-    } 
+    }
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
 
@@ -287,101 +297,47 @@ const DataCollect = () => {
     }
 
     const handleModalConfirm = () => {
-
-        if (match === '') {
-            alert("enter the match number");
-            return;
-        }
-        if (Team === '') {
-            alert("enter the match number")
-            return;
-        }
-        if (hanger === "") {
-            alert("select the climb type, select none if it didn't climb");
-            return;
-        }
-        if(shootLocationText === ""){
-            alert("select shooting location");
-            return;
+        let taxiToString = "false";
+        if(taxi){
+            taxiToString = "true"
         }
 
-        let object =
-            [
-                {
-                    matchNum: match,
-                    teamNum: Team,
-                    taxi: taxi,
-                    humanShot: HumanPlayer,
-                    autoLowerCargo: autoLower,
-                    autoUpperCargo: AutoUpper,
-                    teleLowerCargo: TeleLower,
-                    teleUpperCargo: TeleUpper,
-                    shootingLocations: shootLocationText,
-                    climb: hanger,
-                    drivetrainranking: Drivetrainranking,
-                    defenseRanking: DefenseRanking,
-                    redCard: RedCard,
-                    yelloCard: YelloCard,
-                    techFouls: techFoul,
-                    deactivated: isDeactivated,
-                    disqualified: isDisqualified,
-                    extraComments: comments,
-                }
-            ]
-
-        // object = addNewData(object)
-        // console.log(object)
-
-        addNewData(object);
-        handleModalCancel()
+        let humanShotToText = "false";
+        if(HumanPlayer){
+            humanShotToText = "true"
+        }
+        let isDeactivatedToString = "false";
+        if(isDeactivated){
+            isDeactivatedToString = "true";
+        }
+        let isDisqualifiedToString = "false";
+        if(isDisqualified){
+            isDisqualifiedToString = "true"; 
+        }
+        createTable();
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, autoLowerCargo, autoUpperCargo, teleLowerCargo, teleUpperCargo, climb, drivetrainranking, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoLower + "', '" + AutoUpper + "', '" + TeleLower + "', '" + TeleUpper + "', '" + hanger + "', '" + Drivetrainranking + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
+            )
+        })
+        getDBData();
+        navigation.navigate("Home")
     }
 
-    const handleModalCancel = () => {
-        setMatch('')
-        setTeam('')
-        setTaxi(false)
-        setTaxiSwitch(false)
-        setHumanPlayer(false)
-        setHumanSwitch(false)
-        setAutoLower(0)
-        setAutoUpper(0)
-        setTeleLower(0)
-        setTeleUpper(0)
-        setHanger("")
-        setNoneColor("white")
-        setLowColor("white")
-        setMidColor("white")
-        setHighColor("white")
-        setTreversalColor("white")
-        setDrivetrainranking(1)
-        setDefenceRanking(1)
-        setRedCard(0)
-        setYelloCard(0)
-        setTechFoul(0)
-        setIsDeactivated(false)
-        setisDeactivatedSwtich(false)
-        setIsDisqualified(false)
-        setisDisqualifiedSwitch(false)
-        setComments("")
-        navigation.navigate('Home')
+    const getDBData = () => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM dataCollect', [],
+                (tx, results) => {
+                console.log('results length: ', results.rows.length); 
+                console.log("Query successful")
+                console.log(results.rows);
+            })
+        })
+     
     }
 
-    const addNewData = async (newList) => {
-        const documentSnapshot = await firebase.firestore()
-            .collection('data')
-            .doc('matchData')
-            .get()
 
-        let existingData = Object.values(Object.seal(documentSnapshot.data()))
-        let finalList = existingData.concat(newList)
-        let finalObject = Object.assign({}, finalList)
-        // console.log(finalObject)
-        firebaseAccess
-            .collection('data')
-            .doc('matchData')
-            .set(finalObject)
-
-    }
 
     return (
         <>
