@@ -8,7 +8,7 @@ import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabase("scoutingApp.db");
 
 const DataCollect = () => {
-    const firebaseAccess = firebase.firestore()
+    
     const navigation = useNavigation()
     const [taxi, setTaxi] = useState(false)
     const [taxiSwitch, setTaxiSwitch] = useState(false)
