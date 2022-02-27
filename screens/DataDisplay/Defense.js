@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { firebase } from '../../firebase/config'
+import { AntDesign, Entypo } from "@expo/vector-icons"
 import { SwipeListView } from 'react-native-swipe-list-view'
 import TeamSpecificData from './TeamSpecificData'
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
 
 const Defense = () => {
   const [finalDefenseList, setFinalDefence] = useState([]);
@@ -20,15 +23,7 @@ const Defense = () => {
     let avgs = []
     let teamAndDefenseAvg = []
     let finalDefenseList = []
-    const documentSnapshot = await firebase.firestore()
-    .collection('data')
-    .doc('matchData')
-    .get()
-
-    let rawData = Object.values(Object.seal(documentSnapshot.data()))
-
-    setRawData(rawData);
-
+    getMatchDownload()
     for (let index = 0; index < rawData.length; index++) {
         teams = [...teams, rawData[index].teamNum];
     }
@@ -70,6 +65,20 @@ const Defense = () => {
     setFinalDefence(finalDefenseList);
   }
 
+  const getMatchDownload = () => {
+    let sqlList
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM matchDataDownload', [],
+            (tx, results) => {
+                console.log('results length: ', results.rows.length);
+                console.log("Query successful")
+                setRawData(results.rows._array);
+                // sqlList = results.rows._array;
+            })
+    })
+
+}
   const handleOpenModal = (currentTeam) => {
     setSelectedTeam(currentTeam)
     setTeamDataVisible(true);
@@ -90,11 +99,17 @@ const Defense = () => {
 
   return (
 
-    <View style = {styles.container}>
+    <View style = {styles.container} onTouchStart = {sortTeams}>
+      <View style = {{flexDirection: 'row'}}>
       <Text style = {{fontSize: 25, marginHorizontal: 20, marginVertical: 20,alignSelf: 'flex-start'}}>
         Sorting Defense Teams
       </Text>
+      <TouchableOpacity style = {styles.synchButton} onPress = {sortTeams}>
+        <AntDesign name='reload1' size={25} color = 'white'/>
+      </TouchableOpacity>
+      </View>    
       <TextInput style={styles.SearchtextInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
+      
           <SwipeListView 
             data = {data}
             
@@ -154,5 +169,14 @@ const styles = StyleSheet.create({
       height: 45,
       padding: 10,
       alignSelf: 'flex-start'
-    }
+    },
+    synchButton: {
+      width: 40,
+      height: 40,
+      backgroundColor: '#0782F9',
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center'
+    }  
 })

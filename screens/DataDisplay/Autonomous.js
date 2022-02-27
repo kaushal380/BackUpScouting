@@ -3,6 +3,8 @@ import React, {useState, useLayoutEffect, useEffect} from 'react'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { firebase } from '../../firebase/config'
 import TeamSpecificData from './TeamSpecificData';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
 
 const Autonomous = () => {
 
@@ -15,16 +17,23 @@ const Autonomous = () => {
   const [currentTeam, setCurrentTeam] = useState();
   const [keyword, setKeyword] = useState("");
 
-  const getDBData = async () => {
-    const documentSnapshot = await firebase.firestore()
-    .collection('data')
-    .doc('matchData')
-    .get()
-
-    let raw = Object.values(Object.seal(documentSnapshot.data()))
-    setRawData(raw);
+  const getDBData = () => {
+        getMatchDownload()
   }
+  const getMatchDownload = () => {
+    let sqlList
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM matchDataDownload', [],
+            (tx, results) => {
+                console.log('results length: ', results.rows.length);
+                console.log("Query successful")
+                setRawData(results.rows._array);
+                // sqlList = results.rows._array;
+            })
+    })
 
+}
   const handleSortType = (type) => {
     let selectedColor = "#0782F9"
     let selectedType = ""

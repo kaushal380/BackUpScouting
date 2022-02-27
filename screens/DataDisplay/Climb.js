@@ -3,6 +3,9 @@ import React, {useState, useEffect} from 'react'
 import { firebase } from '../../firebase/config'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import TeamSpecificData from './TeamSpecificData'
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
+
 const Climb = () => {
   useEffect(() => {
     initializeRawData()
@@ -55,17 +58,24 @@ const Climb = () => {
     setVisibleList(selectedType)
   }
 
-  const initializeRawData = async() => {
-    const documentSnapshot = await firebase.firestore()
-    .collection('data')
-    .doc('matchData')
-    .get()
-
-    let raw = Object.values(Object.seal(documentSnapshot.data()))
-
-    setRawData(raw);
-
+  const initializeRawData = () => {
+    getMatchDownload()
   }
+
+  const getMatchDownload = () => {
+    let sqlList
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM matchDataDownload', [],
+            (tx, results) => {
+                console.log('results length: ', results.rows.length);
+                console.log("Query successful")
+                setRawData(results.rows._array);
+                // sqlList = results.rows._array;
+            })
+    })
+
+}
 
   const setVisibleList = (sortType) => {
     // initializeRawData()
