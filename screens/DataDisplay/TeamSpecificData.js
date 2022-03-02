@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image} from 'react-native'
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity} from 'react-native'
 import React, {useState, useEffect} from 'react'
 import {LineChart, PieChart} from "react-native-chart-kit";
 import { firebase } from '../../firebase/config';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
+import { AntDesign, Entypo } from "@expo/vector-icons"
 
 const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
    
@@ -11,11 +14,17 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
   const [autoUpper, setAutoUpper] = useState([34, 5, 3, 2,39]);
   const [autoLower, setAutoLower] = useState([34,4,2,23])
   const [climbData, setClimbData] = useState([])  
+  const [techFouls, setTechFouls] = useState(0);
+  const [redCards, setRedCards] = useState(0);
+  const [yellowcards, setYellowcards] = useState(0);
+  const [disqualified, setDisqualified] = useState(0);
+  const [deactivated, setDeactivated] = useState(0);
   const [robotComments, setRobotComments] = useState()
   const [gracius, setGracius] = useState()
   const [extraComments, setExtraComments] = useState()
   const [image, setImage] = useState()
   const [drivetrain, SetDrivetrain] = useState()
+  const [pitRaw, setPitRaw] = useState();
   const [climbExists, setClimbExsists] = useState()
   const [shooterExists, setShooterExists] = useState()
   const [chartConfig, setChartConfit] = useState({
@@ -66,6 +75,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
       setAutoUpperCargoData()
       setAutoLowerCargoData()
       pitScoutingStuff()
+      // penalities()
     }
     const initializeConsts = () => {
       let raw = rawData;
@@ -326,43 +336,85 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             
           }
 
+          const penalities = () => {
+            let filteredTeamData = initializeConsts()[0];
+            let matches = initializeConsts()[1];
+            let techFoul = 0;
+            let redCard = 0;
+            let yelloCard = 0;
+            let deactivated = 0;
+            let disqualified = 0;
+
+            for (let index = 0; index < matches.length; index++) {
+              for (let i = 0; i < filteredTeamData.length; i++) {
+                if(matches[index] === filteredTeamData[i].matchNum){
+                  redCard = redCard + (filteredTeamData[i].redCard);
+                  yelloCard = yelloCard + (filteredTeamData[i].yelloCard);
+                  techFoul = techFoul+(filteredTeamData[i].techFouls);
+                  if(filteredTeamData[i].deactivated === "true"){
+                    deactivated++;
+                  }
+                  if(filteredTeamData[i].disqualified === "true"){
+                    disqualified++;
+                  }
+                  break;
+                }
+              }
+            }
+            console.log(redCard)
+            setRedCards(redCard);
+            setYellowcards(yelloCard);
+            setTechFouls(techFoul);
+            setDeactivated(deactivated);
+            setDisqualified(disqualified);
+          }
+
           const pitScoutingStuff = async() => {
             let currentTeamObj
             let team = currentTeam
-            console.log("pitscoutingggg")
+            // console.log("pitscoutingggg")
+            // const documentSnapshot = await firebase.firestore()
+            // .collection('data')
+            // .doc('pitScouting')
+            // .get()
 
-            const documentSnapshot = await firebase.firestore()
-            .collection('data')
-            .doc('pitScouting')
-            .get()
-
-            let pitRaw = Object.values(Object.seal(documentSnapshot.data()))
-            
+            // let pitRaw = Object.values(Object.seal(documentSnapshot.data()))
+            db.transaction((tx) => {
+              tx.executeSql(
+                  'SELECT * FROM pitScoutingDownload', [],
+                  (tx, results) => {
+                      console.log('results length: ', results.rows.length);
+                      console.log("Query successful")
+                      console.log(results.rows._array);
+                      setPitRaw(results.rows._array)
+                      
+                  })
+          })
             for (let index = 0; index < pitRaw.length; index++) {
               if(pitRaw[index].teamNum === team){
                 currentTeamObj = pitRaw[index]
               }
             }
-            let shooter = currentTeamObj.shooterExist
-            let climb = currentTeamObj.climbExist
+            let shooter = currentTeamObj.shooterExists
+            let climb = currentTeamObj.climbExists
             console.log(shooter)
             console.log(climb)
             // console.log(currentTeamObj.img)
             setRobotComments(currentTeamObj.robotStatus)
             setGracius(currentTeamObj.graciousProfessionalism)
             setExtraComments(currentTeamObj.extraComments)
-            setImage(currentTeamObj.img)
-            // setImage("https://firebasestorage.googleapis.com/v0/b/scouting-1a932.appspot.com/o/IMG_20220215_224109.jpg?alt=media&token=8c88c57e-4fc3-4770-947e-25474b7b6d43")
             SetDrivetrain(currentTeamObj.drivetrainType)
             setClimbExsists(climb)
             setShooterExists(shooter)
-            console.log(image)
           }
         
 
   return (
-    <ScrollView>
+    <ScrollView onTouchStart={initSequentialCall}>
     <View style = {styles.container} >
+      <TouchableOpacity style = {styles.synchButton} onPress = {closeModal}>
+        <AntDesign name= 'close' size={25} color = 'white'/>
+      </TouchableOpacity>
       <Text style = {{fontSize: 40, alignSelf: 'center', marginVertical: 30, color: '#0782F9', fontWeight: 'bold'}}>Team specific data</Text>
       <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 20, marginBottom: 20, fontWeight: '900'}}>team number: {currentTeam}</Text>
       <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900'}}>teleop data: </Text>
@@ -465,21 +517,21 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
               borderRadius: 16
             }}
           />
+        <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900'}}>Penalities: </Text>
+    <Text style = {styles.textViewItems}>tech fouls: {techFouls}</Text>
+    <Text style = {styles.textViewItems}>yellow-cards: {yellowcards}</Text> 
+    <Text style = {styles.textViewItems}>red-cards: {redCards}</Text> 
+    <Text style = {styles.textViewItems}>deactivated: {deactivated}</Text> 
+    <Text style = {styles.textViewItems}>disqualified: {disqualified}</Text> 
+
     <Text style = {{fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900'}}>Pitscouting Data: </Text>
-    <Text style = {styles.pitScoutingData}>shooter: {shooterExists}</Text>
-    <Text style = {styles.pitScoutingData}>climb: {climbExists}</Text>
-    <Text style = {styles.pitScoutingData}>drivetrain: {drivetrain}</Text>   
-    <Text style = {styles.pitScoutingData}>robot status:  {robotComments}</Text>
-    <Text style = {styles.pitScoutingData}>gracious professionalism: {gracius}</Text>
-    <Text style = {styles.pitScoutingData}>extra comments: {extraComments}</Text>
-    <Text style = {styles.pitScoutingData}>image: </Text>
-    <Image         
-    source={{
-        uri: image
-    }}
-    style = {{height: 400, width: 350}}></Image>
-    <Text style = {{fontSize: 40, marginTop: 30}}>Print raw</Text>
-    <Text style = {{fontSize: 40}} onPress={closeModal}>close Modal</Text>
+    <Text style = {styles.textViewItems}>shooter: {shooterExists}</Text>
+    <Text style = {styles.textViewItems}>climb: {climbExists}</Text>
+    <Text style = {styles.textViewItems}>drivetrain: {drivetrain}</Text>   
+    <Text style = {styles.textViewItems}>robot status:  {robotComments}</Text>
+    <Text style = {styles.textViewItems}>gracious professionalism: {gracius}</Text>
+    <Text style = {styles.textViewItems}>extra comments: {extraComments}</Text>
+    {/* <Text style = {{fontSize: 40, marginTop: 30}}>Print raw</Text> */}
     </View>
     </ScrollView>
   )
@@ -493,10 +545,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     }, 
-    pitScoutingData: {
+    textViewItems: {
       fontSize: 20,
       alignSelf: 'flex-start',
       marginLeft: 20,
       marginVertical: 10
-    }
+    },
+    synchButton: {
+      width: 40,
+      height: 40,
+      backgroundColor: '#0782F9',
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'flex-end',
+      marginHorizontal: 30,
+      marginTop: 30
+    }  
 })

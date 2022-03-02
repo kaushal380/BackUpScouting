@@ -2,22 +2,34 @@ import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, Modal, Tou
 import React, { useState, useLayoutEffect } from 'react'
 import { firebase } from '../../firebase/config'
 import TeamSpecificData from './TeamSpecificData'
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
+import { AntDesign, Entypo } from "@expo/vector-icons"
+
 const AllTeamData = () => {
-  const [finalData, setFinalData] = useState(null);
+  const [finalData, setFinalData] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [rawData, setRawData] = useState()
   const [modal, setModal] = useState(false)
   const [currentTeam, setCurrentTeam] = useState();
   useLayoutEffect(() => { getEverything() }, []);
 
-  const getEverything = async () => {
-    const documentSnapshot = await firebase.firestore()
-      .collection('data')
-      .doc('matchData')
-      .get()
+  const getEverything = () => {
 
-    let raw = Object.values(Object.seal(documentSnapshot.data()));
-    setRawData(raw);
+    db.transaction((tx) => {
+      tx.executeSql(
+          'SELECT * FROM matchDataDownload', [],
+          (tx, results) => {
+              console.log('results length: ', results.rows.length);
+              console.log("Query successful")
+              setRawData(results.rows._array);
+              // sqlList = results.rows._array;
+          })
+  })
+    let raw = [];
+    if(rawData){
+      raw = rawData; 
+    }
     let teams = [];
     for (let i = 0; i < raw.length; i++) {
       teams.push(raw[i].teamNum);
@@ -55,9 +67,6 @@ const AllTeamData = () => {
     setCurrentTeam(currentTeam)
   }
 
-  if (finalData === null) {
-    return <Text>Loading...</Text>
-  } else {
     let data = finalData;
     data = data.filter(element => {
       let key = keyword;
@@ -76,7 +85,12 @@ const AllTeamData = () => {
       
     return (
       <SafeAreaView style={styles.container}>
+        <View style = {{flexDirection: 'row'}}>
         <TextInput style={styles.textInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
+        <TouchableOpacity style = {styles.synchButton} onPress = {getEverything}>
+          <AntDesign name='reload1' size={25} color = 'white'/>
+        </TouchableOpacity>
+        </View>
         <ScrollView>
           {
             data.map((element) =>
@@ -100,11 +114,9 @@ const AllTeamData = () => {
           />
         </Modal>
       </SafeAreaView>
-
-
     )
   }
-}
+
 
 export default AllTeamData
 
@@ -128,6 +140,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 20,
     height: 45,
-    padding: 10
-  }
+    padding: 10,
+    width: '60%'
+  },
+  synchButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#0782F9',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center'
+  }  
 })

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { TouchableOpacity, SafeAreaView, StyleSheet, TextInput, Text, View, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Slider } from 'react-native-elements';
-import Climb from "../DataDisplay/Climb";
 import { AntDesign, Entypo } from "@expo/vector-icons"
 import { useNavigation } from '@react-navigation/core';
 import { firebase } from "../../firebase/config";
-import { CameraComponent } from "./Camera";
-import {getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable} from 'firebase/storage'
+
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase("scoutingApp.db");
+
 const PitScouting = () => {
   const navigation = useNavigation();
   const firebaseAccess = firebase.firestore();
@@ -24,8 +25,7 @@ const PitScouting = () => {
   const [climbExists, setClimbExsists] = useState("nope")
   const [shooterExists, setShooterExists] = useState("nope")
   const [team, setTeam] = useState("");
-  const [image, setImage] = useState();
-  const [downloadUri, setDownloaduri] = useState("")
+
   const drivetraintype = (type) => {
     let selectedcolor = "#0782F9"
 
@@ -42,28 +42,11 @@ const PitScouting = () => {
     }
   }
 
-  const handlePitSubmit = async() => {
-    let url = ""
-    try{
-      const storage = getStorage();
-      // const ref = ref(storage, 'image.png');
-      let name = team + ".jpg"
-      const reference = ref(storage, name)
-      // const img = await fetch(image);
-      // const bytes = 
-      const img = await fetch(image);
-      const bytes = await img.blob();
-      await uploadBytesResumable(reference, bytes)
-      url = (await getDownloadURL(reference)).toString()
-      console.log(url)
-      }
-      catch(e){
-        console.log(e)
-      }
+  const handlePitSubmit = () => {
+    createPitScoutingTable();
     let obj = 
     [
     {
-      img: url,
       teamNum: team,
       visuals: Visualranking,
       drivetrainType: drivetrain, 
@@ -74,34 +57,44 @@ const PitScouting = () => {
       extraComments: comments
     }
   ]
-    console.log(obj);
-    addNewData(obj)
+
+
+  db.transaction((tx) => {
+    tx.executeSql(
+      "INSERT INTO pitscouting (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" + team + "', '" + Visualranking + "', '" + drivetrain + "', '" + climbExists + "', '" + shooterExists + "', '" + text + "', '" + text1 + "', '" + comments + "')"
+    )
+    
+  })
+    // console.log(obj);
+    getDBData();
     handleCancel()
   }
 
   const handleCancel = () => {
     navigation.navigate('Home');
   }
+  const getDBData = () => {
+    db.transaction((tx) => {
+        tx.executeSql(
+            'SELECT * FROM pitscouting', [],
+            (tx, results) => {
+            console.log('results length: ', results.rows.length); 
+            console.log("Query successful")
+            console.log(results.rows);
+        })
+    })
+ 
+}
+const createPitScoutingTable = () => {
+  db.transaction((tx) => {
+    tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS "
+        +"pitscouting "
+        +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
+    )
+}) 
+}
 
-  const addImage = async () => {
-
-
-  }
-  const addNewData = async (newList) => {
-    const documentSnapshot = await firebase.firestore()
-      .collection('data')
-      .doc('pitScouting')
-      .get()
-
-    let existingData = Object.values(Object.seal(documentSnapshot.data()))
-    let finalList = existingData.concat(newList)
-    let finalObject = Object.assign({}, finalList)
-    // console.log(finalObject)
-    firebaseAccess
-      .collection('data')
-      .doc('pitScouting')
-      .set(finalObject)
-  }
 
   const checkClimb = (type) => {
     let selectedcolor1 = "#0782F9"
@@ -129,6 +122,7 @@ const PitScouting = () => {
       setShooterExists("nope")
     }
   }
+
 
   return (
     <ScrollView>
@@ -164,11 +158,6 @@ const PitScouting = () => {
              thumbStyle = {{height : 20, width : 20, backgroundColor : "grey"}}
          />
          </View>
-         <Text style = {{marginLeft: 40, fontSize: 20, marginVertical: 10}}>A picture can explain it all   :)</Text>
-         <CameraComponent 
-         image={image}
-         setImage = {setImage}
-         />
           <Text style={styles.subHeader}>
             ----Mechanisms----
           </Text>

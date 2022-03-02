@@ -8,6 +8,7 @@ import DataCollect from '../screens/DataCollect';
 import DisplayContainer from './DisplayContainer';
 import DisplayMenu from '../screens/DataDisplay/DisplayMenu';
 import Pitscouting from '../screens/Pitscouting/Pitscouting';
+import Login from '../screens/loginScreen/Login';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,8 +20,9 @@ const AppContainer = () => {
   }
 }
   return (
-    <Stack.Navigator initialRouteName='Home'>
-      <Stack.Screen options = {{headerShown: true, headerTitle: 'home'}} name = "Home" component = {Home} />
+    <Stack.Navigator initialRouteName='login'>
+      <Stack.Screen options = {{headerShown: true, headerTitle: 'login'}} name = "login" component={Login}/>
+      <Stack.Screen options = {{headerShown: true, headerTitle: 'home', headerBackVisible: false}} name = "Home" component = {Home} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Data Input'}} name = "DataCollect" component = {DataCollect} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Pitscouting'}} name = "Pits" component = {Pitscouting} />
       <Stack.Screen options = {{headerShown: isDisplayHeaderShown}} name = "DisplayContainer" component = {DisplayContainer} />

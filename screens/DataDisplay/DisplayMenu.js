@@ -7,7 +7,6 @@ const DisplayMenu = () => {
   return (
     <ScrollView>
     <View style = {styles.container}>
-      <Text style = {styles.title}>View teams based on: </Text>
 
     <View style = {styles.buttonView}>
     <TouchableOpacity
@@ -18,6 +17,8 @@ const DisplayMenu = () => {
                 All teams
             </Text>
     </TouchableOpacity>
+
+    <Text style = {styles.title}>filter teams: </Text>
 
       <TouchableOpacity
             style = {styles.ButtonsContainer}

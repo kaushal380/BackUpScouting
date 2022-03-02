@@ -13,7 +13,7 @@ const Home = () => {
 
     const clearFireBase = () => {
         firebaseAccess
-            .collection('data')
+            .collection(firebase.auth().currentUser.uid)
             .doc('matchData')
             .set({})
     }
@@ -29,11 +29,13 @@ const Home = () => {
     }
 
     const downloadMatchData = async() => {
+        createTablePitScoutingData()
         createTableMatchData()
         let existingData;
+        let pitData;
         try{
         const documentSnapshot = await firebase.firestore()
-        .collection('data')
+        .collection(firebase.auth().currentUser.uid)
         .doc('matchData')
         .get()
         .then(
@@ -45,6 +47,20 @@ const Home = () => {
         )
 
         existingData = Object.values(Object.seal(documentSnapshot.data()))
+
+        const documentSnapshot1 = await firebase.firestore()
+        .collection(firebase.auth().currentUser.uid)
+        .doc('pitscouting')
+        .get()
+        .then(
+            db.transaction((tx) => {
+                tx.executeSql(
+                    "DELETE FROM pitScoutingDownload"
+                )
+            })
+        )
+
+        pitData = Object.values(Object.seal(documentSnapshot1.data()))
         }
         catch(e){
             alert(e);
@@ -54,8 +70,13 @@ const Home = () => {
         existingData.forEach(element => {
             insertData(element);
         });
+
+        pitData.forEach(element => {
+            insertPitData(element);
+        })
         
         getMatchDownload();
+        pitDataDownload()
     }
 
     const insertData = (currentObject) => {
@@ -83,36 +104,77 @@ const Home = () => {
             )
         })
     }
-    // const createTablePitScoutingData = () => {
-    //     db.transaction((tx) => {
-    //         tx.executeSql(
-    //             "CREATE TABLE IF NOT EXISTS "
-    //             +"pitScoutingDownload "
-    //             +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
-    //         )
-    //     })
-    // }
+
+    const insertPitData = (currentObject) => {
+
+        let comments = currentObject.extraComments;
+        let team = currentObject.teamNum;
+        let Visualranking = currentObject.visuals;
+        let drivetrain = currentObject.drivetrainType;
+        let climbExists = currentObject.climbExists;
+        let shooterExists = currentObject.shooterExists;
+        let robotStatus = currentObject.robotStatus;
+        let gracius = currentObject.graciousProfessionalism;
+
+        db.transaction((tx) => {
+            tx.executeSql(
+                "INSERT INTO pitScoutingDownload (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" + team + "', '" + Visualranking + "', '" + drivetrain + "', '" + climbExists + "', '" + shooterExists + "', '" + robotStatus + "', '" + gracius + "', '" + comments + "')"
+                )
+        })
+    }
+    const createTablePitScoutingData = () => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                "CREATE TABLE IF NOT EXISTS "
+                +"pitScoutingDownload "
+                +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
+                )
+        })
+    }
     const addNewData = async (newList) => {
+        // console.log(newList)
+        console.log(firebase.auth().currentUser.uid)
         const documentSnapshot = await firebase.firestore()
-            .collection('data')
+            .collection(firebase.auth().currentUser.uid)
             .doc('matchData')
             .get()
 
 
         let existingData = Object.values(Object.seal(documentSnapshot.data()))
-
+        console.log(existingData)
         let finalList = existingData.concat(newList)
-
+        console.log(finalList)
         let finalObject = Object.assign({}, finalList)
-
+        // console.log(finalObject);
         firebaseAccess
-            .collection('data')
+            .collection(firebase.auth().currentUser.uid)
             .doc('matchData')
             .set(finalObject)
             .then(clearDBData)
 
     }
-    const getDBData = () => {
+
+    const addPitScoutingData = async(newList) => {
+        const documentSnapshot = await firebase.firestore()
+        .collection(firebase.auth().currentUser.uid)
+        .doc('pitscouting')
+        .get()
+
+
+        let existingData = Object.values(Object.seal(documentSnapshot.data()))
+        console.log(existingData)
+        let finalList = existingData.concat(newList)
+        console.log(finalList)
+        let finalObject = Object.assign({}, finalList)
+        // console.log(finalObject);
+        firebaseAccess
+            .collection(firebase.auth().currentUser.uid)
+            .doc('pitscouting')
+            .set(finalObject)
+            .then(clearDBData)   
+    }
+
+    const handleUpload = () => {
         let sqlList
         db.transaction((tx) => {
             tx.executeSql(
@@ -120,8 +182,20 @@ const Home = () => {
                 (tx, results) => {
                     console.log('results length: ', results.rows.length);
                     console.log("Query successful")
+                    // console.log(results.rows._array)
                     addNewData(results.rows._array);
                     sqlList = results.rows._array;
+                })
+        })
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM pitscouting', [],
+                (tx, results) => {
+                    console.log('results length: ', results.rows.length);
+                    console.log("Query successful")
+                    // console.log(results.rows._array)
+                    addPitScoutingData(results.rows._array);
+                    
                 })
         })
 
@@ -140,10 +214,30 @@ const Home = () => {
         })
 
     }
+    const pitDataDownload = () => {
+        let sqlList
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM pitScoutingDownload', [],
+                (tx, results) => {
+                    console.log('results length: ', results.rows.length);
+                    console.log("Query successful")
+                    console.log(results.rows._array);
+                    // sqlList = results.rows._array;
+                })
+        })
+
+    }
+    
     const clearDBData = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 "DELETE FROM dataCollect"
+            )
+        })
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM pitscouting"
             )
         })
     }
@@ -156,7 +250,7 @@ const Home = () => {
             <View style={styles.synchContainer}>
                 <TouchableOpacity
                     style={styles.synchButton}
-                    onPress={getDBData}
+                    onPress={handleUpload}
                 >
                     {/* <Text style={styles.Buttontext}>Upload</Text> */}
                     <AntDesign name='upload' size={25} color = "white"/>
