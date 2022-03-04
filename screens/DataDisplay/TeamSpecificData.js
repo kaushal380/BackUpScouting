@@ -75,7 +75,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
       setAutoUpperCargoData()
       setAutoLowerCargoData()
       pitScoutingStuff()
-      // penalities()
+      penalities()
     }
     const initializeConsts = () => {
       let raw = rawData;
@@ -345,9 +345,11 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             let deactivated = 0;
             let disqualified = 0;
 
+            console.log(filteredTeamData)
+            console.log(matches)
             for (let index = 0; index < matches.length; index++) {
               for (let i = 0; i < filteredTeamData.length; i++) {
-                if(matches[index] === filteredTeamData[i].matchNum){
+                if(matches[index] == filteredTeamData[i].matchNum){
                   redCard = redCard + (filteredTeamData[i].redCard);
                   yelloCard = yelloCard + (filteredTeamData[i].yelloCard);
                   techFoul = techFoul+(filteredTeamData[i].techFouls);
@@ -385,7 +387,7 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
                   (tx, results) => {
                       console.log('results length: ', results.rows.length);
                       console.log("Query successful")
-                      console.log(results.rows._array);
+                      // console.log(results.rows._array);
                       setPitRaw(results.rows._array)
                       
                   })
@@ -397,8 +399,6 @@ const TeamSpecificData = ({currentTeam, rawData, setModal}) => {
             }
             let shooter = currentTeamObj.shooterExists
             let climb = currentTeamObj.climbExists
-            console.log(shooter)
-            console.log(climb)
             // console.log(currentTeamObj.img)
             setRobotComments(currentTeamObj.robotStatus)
             setGracius(currentTeamObj.graciousProfessionalism)
