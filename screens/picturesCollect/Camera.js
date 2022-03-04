@@ -37,7 +37,7 @@ export const CameraComponent = ({image, setImage}) => {
 
     const takePhoto = async () => {
         const { uri } = await camera.takePictureAsync({ quality: 1 });
-        console.log(uri)
+        // console.log(uri)
         setImage(uri);
     }
 
@@ -73,14 +73,15 @@ export const CameraComponent = ({image, setImage}) => {
         </View>
     )
     const photoView = (
-        <View style={{ flex: 1, height: 500, marginRight: 20, marginLeft: 20 }}>
+        <View style={{height: 500, marginRight: 20, marginLeft: 20, borderWidth: 1 }}>
             <Image source={{ uri: image }} style={{ flex: 1, resizeMode: 'contain' }} />
             <TouchableOpacity style={styles.retakeButton} onPress={resetImage}>
                 <Text style={{ color: '#D1F5FF', fontWeight: 'bold' }}>Back</Text>
             </TouchableOpacity>
         </View>
+
     )
-    
+
     if (image) {
         return photoView;
     } else if (showCamera && permission) {
@@ -90,7 +91,7 @@ export const CameraComponent = ({image, setImage}) => {
     }
 
 
-    
+
 }
 
 const styles = StyleSheet.create({
@@ -117,13 +118,13 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     retakeButton: {
-        backgroundColor: "#7D53DE", 
-        width: 75, 
-        height: 40, 
+        backgroundColor: "#7D53DE",
+        width: 75,
+        height: 40,
         borderRadius: 100,
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        marginTop: 15, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
         marginLeft: 150
     }
 })

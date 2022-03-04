@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { AntDesign, Entypo } from "@expo/vector-icons"
 import { useNavigation } from '@react-navigation/core';
@@ -242,6 +242,7 @@ const Home = () => {
         })
     }
     return (
+        <ScrollView>
         <View style={styles.container}>
             <Text style={styles.title} onPress={clearFireBase}>
                 Techno Titans
@@ -278,7 +279,7 @@ const Home = () => {
                     onPress={() => { navigation.navigate('Pits') }}
                 >
                     <Text style={styles.Buttontext}>
-                        pit scouting
+                        Pit Scouting
                     </Text>
                 </TouchableOpacity>
 
@@ -290,9 +291,18 @@ const Home = () => {
                         View Data
                     </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.ButtonsContainer}
+                    onPress={() => { navigation.navigate('picture') }}
+                >
+                    <Text style={styles.Buttontext}>
+                        Take Pictures
+                    </Text>
+                </TouchableOpacity>
 
             </View>
         </View>
+        </ScrollView>
     );
 }
 

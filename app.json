@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Scouting App",
-    "slug": "ScoutingApp",
-    "version": "1.0.0",
+    "name": "Techno Titans Scouting",
+    "slug": "TitanScoutingApp",
+    "version": "1.0.4",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Images/logo_512x512.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Images/logo_512x512.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,12 +18,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "technotitans.scoutapp",
-      "buildNumber": "1.0.0"
+      "bundleIdentifier": "technotitans.scoutingapp"
     },
     "description": "testing in progress",
     "android": {
-      "package": "technotitans.scoutapp",
+      "package": "technotitans.scoutingapp",
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -31,7 +31,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }, 
+    },
     "plugins": [
       [
         "expo-image-picker",

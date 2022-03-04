@@ -331,9 +331,7 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 30,
     borderWidth: 2,
-    padding: 10,
-    
-    
+    padding: 10, 
 },
 });
 
