@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import React, { useState } from 'react';
 import { AntDesign, Entypo } from "@expo/vector-icons"
 import { useNavigation } from '@react-navigation/core';
 import DataCollect from './DataCollect';
+import DataUploadQr from './uploadingSequence/DataUploadQr';
 import { firebase } from '../firebase/config';
 import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabase("scoutingApp.db");
@@ -10,6 +11,10 @@ const db = SQLite.openDatabase("scoutingApp.db");
 const Home = () => {
     const firebaseAccess = firebase.firestore()
     const navigation = useNavigation();
+    const [uploadingArray, setUploadingArray] = useState([]);
+    const [uploadingPitScouting, setUploadingPitscouting] = useState([]);
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     const clearFireBase = () => {
         firebaseAccess
@@ -22,47 +27,47 @@ const Home = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
-                +"matchDataDownload "
-                +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+                + "matchDataDownload "
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
             )
         })
     }
 
-    const downloadMatchData = async() => {
+    const downloadMatchData = async () => {
         createTablePitScoutingData()
         createTableMatchData()
         let existingData;
         let pitData;
-        try{
-        const documentSnapshot = await firebase.firestore()
-        .collection(firebase.auth().currentUser.uid)
-        .doc('matchData')
-        .get()
-        .then(
-            db.transaction((tx) => {
-                tx.executeSql(
-                    "DELETE FROM matchDataDownload"
+        try {
+            const documentSnapshot = await firebase.firestore()
+                .collection(firebase.auth().currentUser.uid)
+                .doc('matchData')
+                .get()
+                .then(
+                    db.transaction((tx) => {
+                        tx.executeSql(
+                            "DELETE FROM matchDataDownload"
+                        )
+                    })
                 )
-            })
-        )
 
-        existingData = Object.values(Object.seal(documentSnapshot.data()))
+            existingData = Object.values(Object.seal(documentSnapshot.data()))
 
-        const documentSnapshot1 = await firebase.firestore()
-        .collection(firebase.auth().currentUser.uid)
-        .doc('pitscouting')
-        .get()
-        .then(
-            db.transaction((tx) => {
-                tx.executeSql(
-                    "DELETE FROM pitScoutingDownload"
+            const documentSnapshot1 = await firebase.firestore()
+                .collection(firebase.auth().currentUser.uid)
+                .doc('pitscouting')
+                .get()
+                .then(
+                    db.transaction((tx) => {
+                        tx.executeSql(
+                            "DELETE FROM pitScoutingDownload"
+                        )
+                    })
                 )
-            })
-        )
 
-        pitData = Object.values(Object.seal(documentSnapshot1.data()))
+            pitData = Object.values(Object.seal(documentSnapshot1.data()))
         }
-        catch(e){
+        catch (e) {
             alert(e);
             return;
         }
@@ -74,13 +79,13 @@ const Home = () => {
         pitData.forEach(element => {
             insertPitData(element);
         })
-        
+
         getMatchDownload();
         pitDataDownload()
     }
 
     const insertData = (currentObject) => {
-        let match =  currentObject.matchNum;
+        let match = currentObject.matchNum;
         let Team = currentObject.teamNum;
         let taxiToString = currentObject.taxi;
         let humanShotToText = currentObject.humanShot;
@@ -119,16 +124,16 @@ const Home = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 "INSERT INTO pitScoutingDownload (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" + team + "', '" + Visualranking + "', '" + drivetrain + "', '" + climbExists + "', '" + shooterExists + "', '" + robotStatus + "', '" + gracius + "', '" + comments + "')"
-                )
+            )
         })
     }
     const createTablePitScoutingData = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
-                +"pitScoutingDownload "
-                +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
-                )
+                + "pitScoutingDownload "
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
+            )
         })
     }
     const addNewData = async (newList) => {
@@ -154,11 +159,11 @@ const Home = () => {
 
     }
 
-    const addPitScoutingData = async(newList) => {
+    const addPitScoutingData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-        .collection(firebase.auth().currentUser.uid)
-        .doc('pitscouting')
-        .get()
+            .collection(firebase.auth().currentUser.uid)
+            .doc('pitscouting')
+            .get()
 
 
         let existingData = Object.values(Object.seal(documentSnapshot.data()))
@@ -171,34 +176,42 @@ const Home = () => {
             .collection(firebase.auth().currentUser.uid)
             .doc('pitscouting')
             .set(finalObject)
-            .then(clearDBData)   
+            .then(clearDBData)
     }
 
     const handleUpload = () => {
-        let sqlList
+        let sqlList;
         db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM dataCollect', [],
                 (tx, results) => {
+                    if(results.rows.length > 0){
                     console.log('results length: ', results.rows.length);
                     console.log("Query successful")
-                    // console.log(results.rows._array)
-                    addNewData(results.rows._array);
-                    sqlList = results.rows._array;
+                    console.log(results.rows._array)
+                    setUploadingArray(results.rows._array);
+                    // addNewData(results.rows._array);
+                    }
+                    else {
+                        alert("you don't have any match data to upload")
+                        return;
+                    }
                 })
         })
         db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM pitscouting', [],
                 (tx, results) => {
+                    if(results.rows.length > 0){
                     console.log('results length: ', results.rows.length);
                     console.log("Query successful")
                     // console.log(results.rows._array)
-                    addPitScoutingData(results.rows._array);
-                    
+                    setUploadingPitscouting(results.rows._array)
+                    // addPitScoutingData(results.rows._array);
+                    }
                 })
         })
-
+        setModalVisible(true);
     }
     const getMatchDownload = () => {
         let sqlList
@@ -228,7 +241,7 @@ const Home = () => {
         })
 
     }
-    
+
     const clearDBData = () => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -243,65 +256,69 @@ const Home = () => {
     }
     return (
         <ScrollView>
-        <View style={styles.container}>
-            <Text style={styles.title} onPress={clearFireBase}>
-                Techno Titans
-            </Text>
+            <View style={styles.container}>
+                <Text style={styles.title} onPress={clearFireBase}>
+                    Techno Titans
+                </Text>
 
-            <View style={styles.synchContainer}>
-                <TouchableOpacity
-                    style={styles.synchButton}
-                    onPress={handleUpload}
-                >
-                    {/* <Text style={styles.Buttontext}>Upload</Text> */}
-                    <AntDesign name='upload' size={25} color = "white"/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.synchButton}
-                    onPress = {downloadMatchData}
-                >
-                    {/* <Text style={styles.Buttontext}>Upload</Text> */}
-                    <AntDesign name= 'download' size={25} color = "white"/>
-                </TouchableOpacity>
+                <View style={styles.synchContainer}>
+                    <TouchableOpacity
+                        style={styles.synchButton}
+                        onPress={handleUpload}
+                    >
+                        {/* <Text style={styles.Buttontext}>Upload</Text> */}
+                        <AntDesign name='upload' size={25} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.synchButton}
+                        onPress={downloadMatchData}
+                    >
+                        {/* <Text style={styles.Buttontext}>Upload</Text> */}
+                        <AntDesign name='download' size={25} color="white" />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.buttonView}>
+                    <TouchableOpacity
+                        style={styles.ButtonsContainer}
+                        onPress={() => { navigation.navigate('DataCollect') }}
+                    >
+                        <Text style={styles.Buttontext}>
+                            Scout Data
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.ButtonsContainer}
+                        onPress={() => { navigation.navigate('Pits') }}
+                    >
+                        <Text style={styles.Buttontext}>
+                            Pit Scouting
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.ButtonsContainer}
+                        onPress={() => { navigation.navigate('picture') }}
+                    >
+                        <Text style={styles.Buttontext}>
+                            Take Pictures
+                        </Text>
+                    </TouchableOpacity>
+
+                </View>
             </View>
-            <View style={styles.buttonView}>
-                <TouchableOpacity
-                    style={styles.ButtonsContainer}
-                    onPress={() => { navigation.navigate('DataCollect') }}
-                >
-                    <Text style={styles.Buttontext}>
-                        Scout Data
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.ButtonsContainer}
-                    onPress={() => { navigation.navigate('Pits') }}
-                >
-                    <Text style={styles.Buttontext}>
-                        Pit Scouting
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.ButtonsContainer}
-                    onPress={() => { navigation.navigate('DisplayContainer') }}
-                >
-                    <Text style={styles.Buttontext}>
-                        View Data
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.ButtonsContainer}
-                    onPress={() => { navigation.navigate('picture') }}
-                >
-                    <Text style={styles.Buttontext}>
-                        Take Pictures
-                    </Text>
-                </TouchableOpacity>
-
-            </View>
-        </View>
+            <Modal
+            visible = {modalVisible}
+            >
+                <DataUploadQr
+                    setModal={setModalVisible}
+                    matchData = {uploadingArray}
+                    pitData = {uploadingPitScouting}
+                    clearDBData = {clearDBData}
+                    setUploadingMatchData = {setUploadingArray}
+                    setUploadingPitscoutingData = {setUploadingPitscouting}
+                />
+            </Modal>
         </ScrollView>
     );
 }
@@ -342,12 +359,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: 200,
         justifyContent: 'space-evenly',
-        
+
     },
     synchButton: {
         backgroundColor: "#0782F9",
         width: 60,
-        justifyContent:'center',
+        justifyContent: 'center',
         alignItems: 'center',
         height: 60,
         marginTop: 20,
