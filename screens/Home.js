@@ -189,8 +189,8 @@ const Home = () => {
                     console.log('results length: ', results.rows.length);
                     console.log("Query successful")
                     console.log(results.rows._array)
-                    setUploadingArray(results.rows._array);
-                    // addNewData(results.rows._array);
+                    // setUploadingArray(results.rows._array);
+                    addNewData(results.rows._array);
                     }
                     else {
                         alert("you don't have any match data to upload")
@@ -206,12 +206,12 @@ const Home = () => {
                     console.log('results length: ', results.rows.length);
                     console.log("Query successful")
                     // console.log(results.rows._array)
-                    setUploadingPitscouting(results.rows._array)
-                    // addPitScoutingData(results.rows._array);
+                    // setUploadingPitscouting(results.rows._array)
+                    addPitScoutingData(results.rows._array);
                     }
                 })
         })
-        setModalVisible(true);
+        // setModalVisible(true);
     }
     const getMatchDownload = () => {
         let sqlList
@@ -293,6 +293,15 @@ const Home = () => {
                     >
                         <Text style={styles.Buttontext}>
                             Pit Scouting
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.ButtonsContainer}
+                        onPress={() => { navigation.navigate('DisplayContainer') }}
+                    >
+                        <Text style={styles.Buttontext}>
+                            View data
                         </Text>
                     </TouchableOpacity>
 
