@@ -28,7 +28,7 @@ const Home = () => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
                 + "matchDataDownload "
-                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoAttemptedShots INTEGER, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleAttemptedShots INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, climbAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
             )
         })
     }
@@ -89,12 +89,15 @@ const Home = () => {
         let Team = currentObject.teamNum;
         let taxiToString = currentObject.taxi;
         let humanShotToText = currentObject.humanShot;
+        let autoAttempted = currentObject.autoAttemptedShots;
         let autoLower = currentObject.autoLowerCargo;
         let AutoUpper = currentObject.autoUpperCargo;
+        let teleAttempted = currentObject.teleAttemptedShots;
         let TeleLower = currentObject.teleLowerCargo;
         let TeleUpper = currentObject.teleUpperCargo;
+        let shootLocationText = currentObject.shootingLocation;
+        let climbAttempted = currentObject.climbAttempted;
         let hanger = currentObject.climb;
-        let Drivetrainranking = currentObject.drivetrainranking;
         let DefenseRanking = currentObject.defenseRanking;
         let RedCard = currentObject.redCard;
         let YelloCard = currentObject.yelloCard;
@@ -105,7 +108,7 @@ const Home = () => {
 
         db.transaction((tx) => {
             tx.executeSql(
-                "INSERT INTO matchDataDownload (matchNum, teamNum, taxi, humanShot, autoLowerCargo, autoUpperCargo, teleLowerCargo, teleUpperCargo, climb, drivetrainranking, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoLower + "', '" + AutoUpper + "', '" + TeleLower + "', '" + TeleUpper + "', '" + hanger + "', '" + Drivetrainranking + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
+                "INSERT INTO matchDataDownload (matchNum, teamNum, taxi, humanShot, autoAttemptedShots, autoLowerCargo, autoUpperCargo, teleAttemptedShots, teleLowerCargo, teleUpperCargo, shootingLocation, climbAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttempted + "', '" + autoLower + "', '" + AutoUpper + "', '" + teleAttempted + "', '" + TeleLower + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + climbAttempted + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
             )
         })
     }

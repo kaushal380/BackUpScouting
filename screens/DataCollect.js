@@ -8,7 +8,7 @@ import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabase("scoutingApp.db");
 
 const DataCollect = () => {
-    
+
     const navigation = useNavigation()
     const [taxi, setTaxi] = useState(false)
     const [taxiSwitch, setTaxiSwitch] = useState(false)
@@ -16,11 +16,14 @@ const DataCollect = () => {
     const [HumanSwitch, setHumanSwitch] = useState(false)
     const [Team, setTeam] = useState('')
     const [match, setMatch] = useState('')
+    const [autoAttempted, setautoAttempted] = useState(0);
     const [AutoUpper, setAutoUpper] = useState(0);
     const [autoLower, setAutoLower] = useState(0);
+    const [teleAttempted, setTeleAttempted] = useState(0);
     const [TeleUpper, setTeleUpper] = useState(0);
     const [TeleLower, setTeleLower] = useState(0);
 
+    const [hangerAttempted, sethangerAttempted] = useState(false);
     const [hanger, setHanger] = useState("");
     const [lowColor, setLowColor] = useState("white")
     const [midColor, setMidColor] = useState("white")
@@ -46,15 +49,15 @@ const DataCollect = () => {
     const [isDisqualified, setIsDisqualified] = useState(false);
     const [isDisqualifiedSwitch, setisDisqualifiedSwitch] = useState(false)
 
-    const [outcome, setOutcome] = useState("");
+
     const [comments, setComments] = useState("");
 
     const createTable = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
-                +"dataCollect "
-                +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, climb TEXT, drivetrainranking INTEGER, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+                + "dataCollect "
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoAttemptedShots INTEGER, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleAttemptedShots INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, climbAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
             )
         })
     }
@@ -67,6 +70,22 @@ const DataCollect = () => {
         HumanPlayer === false ? setHumanPlayer(true) : setHumanPlayer(false)
     }
 
+    const handleAutoAttempted = (type) => {
+        let setNum = autoAttempted;
+        if (type === "plus") {
+            setNum++;
+        }
+        else {
+            if (setNum > 0) {
+                setNum--;
+            }
+            else {
+                setautoAttempted(setNum);
+                return;
+            }
+        }
+        setautoAttempted(setNum);
+    }
     const handleCargoLower = (type) => {
         let setNum = autoLower;
         if (type === "plus") {
@@ -100,6 +119,24 @@ const DataCollect = () => {
         }
         setAutoUpper(setNum)
     }
+
+    const handleTeleAttempted = (type) => {
+        let setNum = teleAttempted;
+        if (type === "plus") {
+            setNum++;
+        }
+        else {
+            if (setNum > 0) {
+                setNum--;
+            }
+            else {
+                setTeleAttempted(setNum);
+                return;
+            }
+        }
+        setTeleAttempted(setNum);
+    }
+
     const handleCargoLowerTele = (type) => {
         let setNum = TeleLower;
         if (type === "plus") {
@@ -168,76 +205,80 @@ const DataCollect = () => {
     const handleShootLocation = (type) => {
         let selectedColor = "#0782F9";
         let currentList = shootLocation;
-        if(type === "near"){
-            if(currentList.includes("anywhere", 0)){
+        if (type === "near") {
+            if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
-            if(nearColor === "white"){
+            if (nearColor === "white") {
                 setNearColor(selectedColor);
                 currentList = [...currentList, "near"];
             }
-            else if(nearColor === selectedColor){
+            else if (nearColor === selectedColor) {
                 setNearColor("white");
                 const index = currentList.findIndex((item) => item === "near")
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
         }
-        if(type === "middle"){
-            if(currentList.includes("anywhere", 0)){
+        if (type === "middle") {
+            if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
-            if(middleColor === "white"){
+            if (middleColor === "white") {
                 setMiddleColor(selectedColor);
                 currentList = [...currentList, "middle"];
             }
-            else if(middleColor === selectedColor){
+            else if (middleColor === selectedColor) {
                 setMiddleColor("white");
                 const index = currentList.findIndex((item) => item === "middle");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
         }
-        if(type === "far"){
-            if(currentList.includes("anywhere", 0)){
+        if (type === "far") {
+            if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
-            if(farColor === "white"){
+            if (farColor === "white") {
                 setFarColor(selectedColor);
                 currentList = [...currentList, "far"];
             }
-            else if(farColor === selectedColor){
+            else if (farColor === selectedColor) {
                 setFarColor("white");
                 const index = currentList.findIndex((item) => item === "far");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
         }
-        if(type === "any"){
-            if(anyColor === "white"){
+        if (type === "any") {
+            if (anyColor === "white") {
                 currentList = ["anywhere"];
                 setAnyColor(selectedColor);
                 setNearColor("white");
                 setMiddleColor("white");
                 setFarColor("white");
             }
-            else if(anyColor === selectedColor){
+            else if (anyColor === selectedColor) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
-                currentList.splice(index,1);
+                currentList.splice(index, 1);
             }
         }
-       console.log(currentList);
-       setShootLocation(currentList);
+        console.log(currentList);
+        setShootLocation(currentList);
 
-       let textVersion = "";
-       currentList.forEach(element => {
-           textVersion = textVersion + element + ", "
-       });
-       setShootLocationText(textVersion);
+        let textVersion = "";
+        currentList.forEach(element => {
+            textVersion = textVersion + element + ", "
+        });
+        setShootLocationText(textVersion);
+    }
+
+    const handleHangerAttempt = () => {
+        hangerAttempted === false ? sethangerAttempted(true) : sethangerAttempted(false)
     }
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
@@ -297,27 +338,44 @@ const DataCollect = () => {
     }
 
     const handleModalConfirm = () => {
+        if (!Team) {
+            alert("enter the team number")
+            return;
+        }
+        if (!match) {
+            alert("enter the match number")
+            return;
+        }
+        if (!hanger) {
+            alert("select the climb type, select none if the bot didn't climb");
+            return;
+        }
         let taxiToString = "false";
-        if(taxi){
+        if (taxi) {
             taxiToString = "true"
         }
 
         let humanShotToText = "false";
-        if(HumanPlayer){
+        if (HumanPlayer) {
             humanShotToText = "true"
         }
         let isDeactivatedToString = "false";
-        if(isDeactivated){
+        if (isDeactivated) {
             isDeactivatedToString = "true";
         }
         let isDisqualifiedToString = "false";
-        if(isDisqualified){
-            isDisqualifiedToString = "true"; 
+        if (isDisqualified) {
+            isDisqualifiedToString = "true";
+        }
+
+        let climbAttempted = "false";
+        if(hangerAttempted){
+            climbAttempted = "true";
         }
         createTable();
         db.transaction((tx) => {
             tx.executeSql(
-                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, autoLowerCargo, autoUpperCargo, teleLowerCargo, teleUpperCargo, climb, drivetrainranking, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoLower + "', '" + AutoUpper + "', '" + TeleLower + "', '" + TeleUpper + "', '" + hanger + "', '" + Drivetrainranking + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
+                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, autoAttemptedShots, autoLowerCargo, autoUpperCargo, teleAttemptedShots, teleLowerCargo, teleUpperCargo, shootingLocation, climbAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttempted + "', '" + autoLower + "', '" + AutoUpper + "', '" + teleAttempted + "', '" + TeleLower + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + climbAttempted + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
             )
         })
         getDBData();
@@ -329,14 +387,24 @@ const DataCollect = () => {
             tx.executeSql(
                 'SELECT * FROM dataCollect', [],
                 (tx, results) => {
-                console.log('results length: ', results.rows.length); 
-                console.log("Query successful")
-                console.log(results.rows);
-            })
+                    console.log('results length: ', results.rows.length);
+                    console.log("Query successful")
+                    console.log(results.rows);
+                })
         })
-     
+
     }
 
+    const checkTeamLength = (text) => {
+        if (text.length < 5) {
+            setTeam(text)
+        }
+    }
+    const checkMatchLength = (text) => {
+        if (text.length < 4) {
+            setMatch(text)
+        }
+    }
 
 
     return (
@@ -350,14 +418,14 @@ const DataCollect = () => {
                             placeholder="Team #"
                             keyboardType="number-pad"
                             value={Team}
-                            onChangeText={text => setTeam(text)}
+                            onChangeText={text => checkTeamLength(text)}
                             style={styles.input}
                         />
                         <TextInput
                             placeholder="Match #"
                             keyboardType="number-pad"
                             value={match}
-                            onChangeText={text => setMatch(text)}
+                            onChangeText={text => checkMatchLength(text)}
                             style={styles.input1}
                         />
                     </View>
@@ -370,7 +438,7 @@ const DataCollect = () => {
                         <Text style={{ fontSize: 25 }}>Taxi: </Text>
                         {/* add human player shot*/}
                         <Switch
-                            style={{ position: 'absolute', bottom: -11, left: 60, }}
+                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                             trackColor={{ false: "grey", true: "grey" }}//#767577
                             thumbColor={taxi ? "black" : "black"}//#f5dd4b
                             ios_backgroundColor="#3e3e3e"
@@ -382,13 +450,26 @@ const DataCollect = () => {
                         <Text style={{ fontSize: 25 }}>Human Player Shot: </Text>
                         {/* add human player shot*/}
                         <Switch
-                            style={{ position: 'absolute', bottom: -11, left: 220, }}
+                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                             trackColor={{ false: "grey", true: "grey" }}//#767577
                             thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={handleHuman}
                             value={HumanPlayer}
                         />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                        <View>
+                            <Text style={{ fontSize: 25 }}>attempted shots: </Text>
+                        </View>
+
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleAutoAttempted("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{autoAttempted}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttempted('plus')} />
                     </View>
 
                     <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
@@ -424,6 +505,19 @@ const DataCollect = () => {
                     <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
                         <View>
+                            <Text style={{ fontSize: 25 }}>attempted shots: </Text>
+                        </View>
+
+                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleTeleAttempted("other")} />
+                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text>{teleAttempted}</Text>
+                        </TouchableOpacity>
+                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttempted('plus')} />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                        <View>
                             <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
                         </View>
 
@@ -448,9 +542,9 @@ const DataCollect = () => {
                     </View>
 
                     <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-                    <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
+                        <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
                         <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
-                        <TouchableOpacity
+                            <TouchableOpacity
                                 style={{
                                     backgroundColor: nearColor,
                                     borderRadius: 5,
@@ -508,8 +602,23 @@ const DataCollect = () => {
                                 <Text>anywhere</Text>
                             </TouchableOpacity>
                         </View>
-                    </View> 
+                    </View>
+                    <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
+                        ---- Hanger ----
+                    </Text>
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
+                        <Text style={{ fontSize: 25 }}>climb attempted?   : </Text>
+                        {/* add human player shot*/}
+                        <Switch
+                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                            trackColor={{ false: "grey", true: "grey" }}//#767577
+                            thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={handleHangerAttempt}
+                            value={hangerAttempted}
+                        />
+                    </View>
                     <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
                         <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
 
@@ -589,22 +698,9 @@ const DataCollect = () => {
 
                         </View>
                         <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30 }}>
-                            ---- Drivetrain ----
+                            ---- Defense ----
                         </Text>
-                        <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
-                            <Text style={{ fontSize: 25 }}>Drivetrain ranking : {Drivetrainranking}</Text>
-                            <Slider
-                                value={Drivetrainranking}
-                                onValueChange={(num) => { setDrivetrainranking(num) }}
-                                minimumValue={1}
-                                maximumValue={5}
-                                step={1}
-                                onSlidingComplete={(num) => { setDrivetrainranking(num) }}
-                                allowTouchTrack
-                                trackStyle={{ height: 10 }}
-                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
-                            />
-                        </View>
+
                         <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
                             <Text style={{ fontSize: 25 }}>Defense ranking : {DefenseRanking}</Text>
                             <Slider
@@ -660,10 +756,10 @@ const DataCollect = () => {
                         </View>
 
                         <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25, marginRight: 10 }}>Deactivated: </Text>
+                            <Text style={{ fontSize: 25, marginRight: 10 }}>Deactivated/Broken: </Text>
                             {/* add human player shot*/}
                             <Switch
-                                style={{ position: 'absolute', bottom: -11, left: 140, }}
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                                 trackColor={{ false: "grey", true: "grey" }}//#767577
                                 thumbColor={taxi ? "black" : "black"}//#f5dd4b
                                 ios_backgroundColor="#3e3e3e"
@@ -676,7 +772,7 @@ const DataCollect = () => {
                             <Text style={{ fontSize: 25, marginRight: 10 }}>Disqualified: </Text>
                             {/* add human player shot*/}
                             <Switch
-                                style={{ position: 'absolute', bottom: -11, left: 140, }}
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                                 trackColor={{ false: "grey", true: "grey" }}//#767577
                                 thumbColor={taxi ? "black" : "black"}//#f5dd4b
                                 ios_backgroundColor="#3e3e3e"
@@ -702,7 +798,7 @@ const DataCollect = () => {
                     </View>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 30 }}>
 
-                        <AntDesign name='close' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { handleModalCancel() }} />
+                        <AntDesign name='close' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { navigation.navigate("Home") }} />
                         <AntDesign name='check' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
                     </View>
 
