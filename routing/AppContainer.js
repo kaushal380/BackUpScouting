@@ -21,7 +21,7 @@ const AppContainer = () => {
 }
   return (
     <Stack.Navigator initialRouteName='login'>
-      <Stack.Screen options = {{headerShown: true, headerTitle: 'login'}} name = "login" component={Login}/>
+      {/* <Stack.Screen options = {{headerShown: true, headerTitle: 'login'}} name = "login" component={Login}/> */}
       <Stack.Screen options = {{headerShown: true, headerTitle: 'home', headerBackVisible: false}} name = "Home" component = {Home} />
       <Stack.Screen options = {{headerShown: true, headerTitle: 'pictures'}} name = "picture" component={PictureCollect}/>
       <Stack.Screen options = {{headerShown: true, headerTitle: 'Data Input'}} name = "DataCollect" component = {DataCollect} />

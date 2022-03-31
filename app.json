@@ -2,7 +2,7 @@
   "expo": {
     "name": "Techno Titans Scouting",
     "slug": "TitanScoutingApp",
-    "version": "1.0.4",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/Images/logo_512x512.png",
     "splash": {
@@ -23,7 +23,7 @@
     "description": "testing in progress",
     "android": {
       "package": "technotitans.scoutingapp",
-      "versionCode": 4,
+      "versionCode": 7,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

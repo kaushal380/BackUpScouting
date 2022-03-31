@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { TouchableOpacity, SafeAreaView, StyleSheet, TextInput, Text, View, ScrollView, KeyboardAvoidingView } from "react-native";
-import { Slider } from 'react-native-elements';
-import { AntDesign, Entypo } from "@expo/vector-icons"
-import { useNavigation } from '@react-navigation/core';
+import {
+  TouchableOpacity,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
+import { Slider } from "react-native-elements";
+import { AntDesign, Entypo } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
 import { firebase } from "../../firebase/config";
 
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabase("scoutingApp.db");
 
 const PitScouting = () => {
@@ -14,115 +23,297 @@ const PitScouting = () => {
   const [text, onChangeText] = useState("");
   const [text1, onChangeText1] = useState("");
   const [comments, whatyougottasayaboutem] = useState("");
-  const [Visualranking, setvisualranking] = useState(1);
   const [holonomic, setholonomic] = useState("white");
   const [nonholonomic, setnonholonmic] = useState("white");
+  const [other, setOther] = useState("white");
+  const [otherShooterColor, setOtherShooterColor] = useState("white");
   const [YesC, setYesC] = useState("white");
   const [NoC, setNoC] = useState("white");
-  const [YesS, setYesS] = useState("white");
-  const [NoS, setNoS] = useState("white");
-  const [drivetrain, SetDrivetrain] = useState("");
-  const [climbExists, setClimbExsists] = useState("nope")
-  const [shooterExists, setShooterExists] = useState("nope")
-  const [team, setTeam] = useState("");
+  const [noneColor, setnoneColor] = useState("white");
+  const [flywheelColor, setflywheelColor] = useState("white");
+  const [catapultColor, setcatapultColor] = useState("white");
+  const [bucketColor, setbucketColor] = useState("white");
+  const [climbExists, setClimbExsists] = useState("nope");
+  const [shooterExists, setShooterExists] = useState("nope");
+  const [name, setName] = useState(""); //name of scouter
+  const [team, setTeam] = useState(""); //team number
+  const [approxTime, setApproxTime] = useState(""); //approx time scouted
+  const [review, setReview] = useState(""); // Overall review
+  const [robustnessRanking, setrobustnessRanking] = useState(1); //Robustness Ranking/Scale
+  const [driverExperience, setdriverExperience] = useState(1); //Drive team Experience
+  const [electricalOrangization, setelectricalOrangization] = useState(1); //Organization of Electrical
+  const [mechComplexity, setmechComplexity] = useState(1); //Mechanical Complexity
+  const [graciousProfessionalism, setgraciousProfessionalism] = useState(1); //Gracious Professionalism
+  const [organizationOfPit, setorganizationOfPit] = useState(1); // Pit organization
+  const [mechDescription, setmechDiscription] = useState(""); //Mechanical Description
+  const [drivetrain, SetDrivetrain] = useState(""); //Drivetrain type, holonomic, non-holonomic or other
+  const [drivetrainOther, setdrivetrainOther] = useState(""); // Drivetrain type is other was selected
+  const [shooterType, setShooterType] = useState(""); //Shooter type, catapult, flywheel, bucket, other
+  const [shooterTypeOther, setShooterTypeOther] = useState(""); //Shooter type is other was selected
+  const [shooterElaboration, setShooterElaboration] = useState(""); //Shooter Elaboration
+  const [climbHeight, setClimbHeight] = useState(1);  //Climb Height 1 = none, 2 = low, 3 = mid, 4 = high, 5 = traversal
+  const [climbElaboration, setclimbElaboration] = useState(""); //Climb Elaboration
+  const [sensors, setsensors] = useState([]); //Array containing sensors. Click button again = removes sensor from array
+  const [nonFunctionalMech, setNonFunctionalMech] = useState([]); //Array containing non-functional mechanical components. Click button again = removes component from array
+  const [robotInProgress, setrobotInProgress] = useState(false); //Are they currently working on the robot?
+  const [robotInProgressDescription, setrobotInProgressDescription] =
+    useState(""); //If robot is in progress, what are they working on?
+  const [electricalLocation, setelectricalLocation] = useState(""); // Location of electrical components
+  const [automationDescription, setautomationDescription] = useState(""); //Description of automation
+  const [additionalComments, setAdditionalComments] = useState(""); //Additional COmments
+
+  //if inProgress is "Yes", then robotInProgress is true and show text input
+  //if inProgress is "No", then robotInProgress is false
+  const inProgress = (progress) => {
+    if (progress === "Yes") {
+      setrobotInProgress(true);
+    }
+    if (progress === "No") {
+      setrobotInProgress(false);
+    }
+  };
+
+  const showInProgressTextInput = () => {
+    if (robotInProgress === true) {
+      return (
+        <View
+          style={{
+            marginTop: 10,
+            borderWidth: 2,
+            height: 30,
+            width: 350,
+            marginLeft: 35,
+          }}
+        >
+          <TextInput
+            style={styles.textInput}
+            placeholder="What mechanisms are being currently worked on?"
+            onChangeText={(text) => setrobotInProgressDescription(text)}
+            value={setrobotInProgressDescription}
+          />
+        </View>
+      );
+    }
+  };
+
+  //add mech to nonFunctionalMech
+  //if mech is already in nonFunctionalMech, remove it
+  const addMech = (mech) => {
+    if (nonFunctionalMech.includes(mech)) {
+      setNonFunctionalMech(nonFunctionalMech.filter((m) => m !== mech));
+    } else {
+      setNonFunctionalMech([...nonFunctionalMech, mech]);
+    }
+  };
+
+  //add sensors to sensorArray
+  //if sensors is already in sensorArray, remove it
+  const addSensor = (sensor) => {
+    if (sensors.includes(sensor)) {
+      setsensors(sensors.filter((item) => item !== sensor));
+    } else {
+      setsensors([...sensors, sensor]);
+    }
+  };
 
   const drivetraintype = (type) => {
-    let selectedcolor = "#0782F9"
+    let selectedcolor = "#0782F9";
 
     if (type === "holonomic") {
-      setholonomic(selectedcolor)
+      setholonomic(selectedcolor);
       setnonholonmic("white");
+      setOther("white");
       SetDrivetrain("holonomic");
-
     }
     if (type === "nonholonomic") {
-      setholonomic("white")
-      setnonholonmic(selectedcolor)
-      SetDrivetrain("non-holonomic")
+      setholonomic("white");
+      setOther("white");
+      setnonholonmic(selectedcolor);
+      SetDrivetrain("non-holonomic");
     }
-  }
+
+    if (type === "other") {
+      setholonomic("white");
+      setnonholonmic("white");
+      setOther(selectedcolor);
+      SetDrivetrain("other");
+    }
+  };
 
   const handlePitSubmit = () => {
     createPitScoutingTable();
-    let obj = 
-    [
-    {
-      teamNum: team,
-      visuals: Visualranking,
-      drivetrainType: drivetrain, 
-      climbExist: climbExists,
-      shooterExist: shooterExists,
-      robotStatus: text,
-      graciousProfessionalism: text1,
-      extraComments: comments
-    }
-  ]
+    let obj = [
+      {
+        teamNum: team,
+        visuals: Visualranking,
+        drivetrainType: drivetrain,
+        climbExist: climbExists,
+        shooterExist: shooterExists,
+        robotStatus: text,
+        graciousProfessionalism: text1,
+        extraComments: comments,
+      },
+    ];
 
-
-  db.transaction((tx) => {
-    tx.executeSql(
-      "INSERT INTO pitscouting (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" + team + "', '" + Visualranking + "', '" + drivetrain + "', '" + climbExists + "', '" + shooterExists + "', '" + text + "', '" + text1 + "', '" + comments + "')"
-    )
-    
-  })
+    db.transaction((tx) => {
+      tx.executeSql(
+        "INSERT INTO pitscouting (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" +
+          team +
+          "', '" +
+          Visualranking +
+          "', '" +
+          drivetrain +
+          "', '" +
+          climbExists +
+          "', '" +
+          shooterExists +
+          "', '" +
+          text +
+          "', '" +
+          text1 +
+          "', '" +
+          comments +
+          "')"
+      );
+    });
     // console.log(obj);
     getDBData();
-    handleCancel()
-  }
+    handleCancel();
+  };
 
   const handleCancel = () => {
-    navigation.navigate('Home');
-  }
+    navigation.navigate("Home");
+  };
   const getDBData = () => {
     db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM pitscouting', [],
-            (tx, results) => {
-            console.log('results length: ', results.rows.length); 
-            console.log("Query successful")
-            console.log(results.rows);
-        })
-    })
- 
-}
-const createPitScoutingTable = () => {
-  db.transaction((tx) => {
-    tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS "
-        +"pitscouting "
-        +"(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
-    )
-}) 
-}
-
+      tx.executeSql("SELECT * FROM pitscouting", [], (tx, results) => {
+        console.log("results length: ", results.rows.length);
+        console.log("Query successful");
+        console.log(results.rows);
+      });
+    });
+  };
+  const createPitScoutingTable = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS " +
+          "pitscouting " +
+          "(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
+      );
+    });
+  };
 
   const checkClimb = (type) => {
-    let selectedcolor1 = "#0782F9"
+    let selectedcolor1 = "#0782F9";
     if (type === "Yes") {
-      setYesC(selectedcolor1)
-      setNoC("white")
-      setClimbExsists("yes")
+      setYesC(selectedcolor1);
+      setNoC("white");
+      setClimbExsists("yes");
     }
     if (type === "No") {
-      setYesC("white")
-      setNoC(selectedcolor1)
-      setClimbExsists("nope")
+      setYesC("white");
+      setNoC(selectedcolor1);
+      setClimbExsists("nope");
     }
-  }
+  };
   const checkShooter = (type) => {
-    let selectedcolor2 = "#0782F9"
-    if (type === "Yes") {
-      setYesS(selectedcolor2)
-      setNoS("white")
-      setShooterExists("yes")
+    let selectedcolor2 = "#0782F9";
+    if (type === "None") {
+      setnoneColor(selectedcolor2);
+      setflywheelColor("white");
+      setbucketColor("white");
+      setOtherShooterColor("white");
+      setcatapultColor("white");
+      setShooterType("None");
     }
-    if (type === "No") {
-      setYesS("white")
-      setNoS(selectedcolor2)
-      setShooterExists("nope")
+    if (type === "Flywheel") {
+      setnoneColor("white");
+      setOtherShooterColor("white");
+      setflywheelColor(selectedcolor2);
+      setcatapultColor("white");
+      setbucketColor("white");
+      setShooterType("Flywheel");
     }
-  }
+    if (type === "Catapult") {
+      setnoneColor("white");
+      setflywheelColor("white");
+      setbucketColor("white");
+      setOtherShooterColor("white");
+      setcatapultColor(selectedcolor2);
+      setShooterType("Catapult");
+    }
 
+    if (type === "Bucket") {
+      setnoneColor("white");
+      setflywheelColor("white");
+      setcatapultColor("white");
+      setbucketColor(selectedcolor2);
+      setOtherShooterColor("white");
+      setShooterType("Bucket");
+    }
+
+    if (type === "Other") {
+      setOtherShooterColor(selectedcolor2);
+      setnoneColor("white");
+      setflywheelColor("white");
+      setcatapultColor("white");
+      setbucketColor("white");
+      setShooterType("Other");
+    }
+  };
+
+  //if drivetrain is "other" then show the text input
+  const showDriveTrainTextInput = () => {
+    if (drivetrain === "other") {
+      return (
+        <View style={{ marginTop: 10, borderWidth: 2, height: 30, width: 150 }}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter Drivetrain"
+            onChangeText={(text) => setdrivetrainOther(text)}
+          />
+        </View>
+      );
+    }
+  };
+
+  //if ShooterType is "other" then show the text input
+  const showShooterTypeTextInput = () => {
+    if (shooterType === "Other") {
+      return (
+        <View style={{ marginTop: 10, borderWidth: 2, height: 30, width: 150 }}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter Shooter Type"
+            onChangeText={(text) => setShooterTypeOther(text)}
+          />
+        </View>
+      );
+    }
+  };
+
+  //if climb height is 1, then show the text "none"
+  //else if the climb height is 2, then show the text "low"
+  //else if the climb height is 3, then show the text "Mid"
+  //else if the climb height is 4, then show the text "High"
+  //else if the climb height is 5, then show the text "Traversal"
+  const showClimbHeightText = () => {
+    if (climbHeight === 1) {
+      return <Text>None</Text>;
+    }
+    if (climbHeight === 2) {
+      return <Text>Low</Text>;
+    }
+    if (climbHeight === 3) {
+      return <Text>Mid</Text>;
+    }
+    if (climbHeight === 4) {
+      return <Text>High</Text>;
+    }
+    if (climbHeight === 5) {
+      return <Text>Traversal</Text>;
+    }
+  };
 
   return (
     <ScrollView>
@@ -131,165 +322,609 @@ const createPitScoutingTable = () => {
           style={styles.container}
           behavior="padding" // try padding for ios maybe?
         >
-        
-        <TextInput
-                 placeholder = "Team #"
-                 keyboardType= "number-pad"
-                 value = {team}
-                 onChangeText = {text => setTeam(text)}
-                 style = {styles.Teaminput}                   
-         />
-        
-      <Text style = {{alignSelf: 'center', marginTop: 20, fontSize: 30}}>
-             ---- Visuals ----
-         </Text>
-         <View style = {{marginTop: 35, alignContent: 'center', marginRight: 40}}> 
-         <Text style = {{fontSize: 25, marginLeft: 40}}>Visual Ranking: {Visualranking}</Text>
-         <Slider
-            style = {{marginLeft: 40}}
-             value = {Visualranking}
-             onValueChange = {(num) => {setvisualranking(num)} }
-             minimumValue = {1}
-             maximumValue ={5}
-             step = {1}
-             onSlidingComplete = {(num) => {setvisualranking(num)} }
-             allowTouchTrack
-             trackStyle = {{height : 10}}
-             thumbStyle = {{height : 20, width : 20, backgroundColor : "grey"}}
-         />
-         </View>
-          <Text style={styles.subHeader}>
-            ----Mechanisms----
-          </Text>
+          <TextInput
+            placeholder="Name"
+            keyboardType="keyboard"
+            value={name}
+            onChangeText={(text) => setName(text)}
+            style={styles.Teaminput}
+          />
 
-          <View style={styles.mechRow}>
-            <Text style={styles.mechText}>drivetrain: </Text>
+          <TextInput
+            placeholder="Team #"
+            keyboardType="number-pad"
+            value={team}
+            onChangeText={(text) => setTeam(text)}
+            style={styles.Teaminput}
+          />
+
+          <TextInput
+            placeholder="Approximate Time Scouted (ie: Friday, 3:30PM)"
+            keyboardType="default"
+            value={approxTime}
+            onChangeText={(text) => setApproxTime(text)}
+            style={styles.Teaminput}
+          />
+
+          <TextInput
+            placeholder="Overall Review (optional)"
+            keyboardType="default"
+            value={review}
+            onChangeText={(text) => setReview(text)}
+            style={{ height: 100, margin: 30, borderWidth: 2, padding: 10 }}
+          />
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Robustness Ranking/Scale: {robustnessRanking}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={robustnessRanking}
+              onValueChange={(num) => {
+                setrobustnessRanking(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setrobustnessRanking(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Drive Team Experience: {driverExperience}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={driverExperience}
+              onValueChange={(num) => {
+                setdriverExperience(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setdriverExperience(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Organization of Electrical {electricalOrangization}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={electricalOrangization}
+              onValueChange={(num) => {
+                setelectricalOrangization(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setelectricalOrangization(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Complexity of Mechanisms: {mechComplexity}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={mechComplexity}
+              onValueChange={(num) => {
+                setmechComplexity(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setmechComplexity(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Gracious Professionalism: {graciousProfessionalism}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={graciousProfessionalism}
+              onValueChange={(num) => {
+                setgraciousProfessionalism(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setgraciousProfessionalism(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Organization of Pit: {organizationOfPit}
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={organizationOfPit}
+              onValueChange={(num) => {
+                setorganizationOfPit(num);
+              }}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setorganizationOfPit(num);
+              }}
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
+          </View>
+
+          <TextInput
+            placeholder="Mechanisms Descriptions (optional)"
+            keyboardType="default"
+            value={mechDescription}
+            onChangeText={(text) => setmechDiscription(text)}
+            style={{ height: 100, margin: 30, borderWidth: 2, padding: 10 }}
+          />
+
+          <View style={styles.mechColumn}>
+            <Text style={styles.mechText}>Drivetrain Type</Text>
             <TouchableOpacity
               style={{
                 backgroundColor: holonomic,
                 borderRadius: 5,
-                width: 100, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+                width: 100,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-
-              onPress={() => { drivetraintype("holonomic") }}
+              onPress={() => {
+                drivetraintype("holonomic");
+              }}
             >
-              <Text>holonomic</Text>
+              <Text>Holonomic</Text>
             </TouchableOpacity>
-
 
             <TouchableOpacity
               style={{
                 backgroundColor: nonholonomic,
                 borderRadius: 5,
-                width: 100, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+                width: 100,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-
-              onPress={() => { drivetraintype("nonholonomic") }}
+              onPress={() => {
+                drivetraintype("nonholonomic");
+              }}
             >
-              <Text>nonholonomic</Text>
+              <Text>Non-Holonomic</Text>
             </TouchableOpacity>
+            <View style={styles.mechRow}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: other,
+                  borderRadius: 5,
+                  width: 100,
+                  height: 30,
+                  marginRight: 10,
+                  marginTop: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  drivetraintype("other");
+                }}
+              >
+                <Text>Other</Text>
+              </TouchableOpacity>
+              {showDriveTrainTextInput()}
+            </View>
           </View>
 
-
-          <View style={styles.mechRow}>
-            <Text style={styles.mechText}>Climb: </Text>
+          <View style={styles.mechColumn}>
+            <Text style={styles.mechText}>Shooter </Text>
             <TouchableOpacity
               style={{
-                backgroundColor: YesC,
+                backgroundColor: noneColor,
                 borderRadius: 5,
-                width: 70, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+                width: 70,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-
-              onPress={() => { checkClimb("Yes") }}
+              onPress={() => {
+                checkShooter("None");
+              }}
             >
-              <Text>Yes</Text>
+              <Text>None</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{
-                backgroundColor: NoC,
+                backgroundColor: flywheelColor,
                 borderRadius: 5,
-                width: 70, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+                width: 70,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-
-              onPress={() => { checkClimb("No") }}
+              onPress={() => {
+                checkShooter("Flywheel");
+              }}
             >
-              <Text>No</Text>
+              <Text>Flywheel</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: catapultColor,
+                borderRadius: 5,
+                width: 70,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                checkShooter("Catapult");
+              }}
+            >
+              <Text>Catapult</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                backgroundColor: bucketColor,
+                borderRadius: 5,
+                width: 70,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                checkShooter("Bucket");
+              }}
+            >
+              <Text>Bucket</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                backgroundColor: otherShooterColor,
+                borderRadius: 5,
+                width: 70,
+                height: 30,
+                marginRight: 10,
+                marginTop: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                checkShooter("Other");
+              }}
+            >
+              <Text>Other</Text>
+            </TouchableOpacity>
+            {showShooterTypeTextInput()}
           </View>
 
+          <TextInput
+            placeholder="Please elaborate on their shooter"
+            keyboardType="keyboard"
+            value={shooterElaboration}
+            onChangeText={(text) => setShooterElaboration(text)}
+            style={styles.Teaminput}
+          />
 
-          <View style={styles.mechRow}>
-            <Text style={styles.mechText}>Shooter: </Text>
-            <TouchableOpacity
-              style={{
-                backgroundColor: YesS,
-                borderRadius: 5,
-                width: 70, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+          <View
+            style={{ marginTop: 35, alignContent: "center", marginRight: 40 }}
+          >
+            <Text style={{ fontSize: 25, marginLeft: 40 }}>
+              Which rungs was their climb designed to reach?{" "}
+              [{showClimbHeightText()}]
+            </Text>
+            <Slider
+              style={{ marginLeft: 40 }}
+              value={climbHeight}
+              onValueChange={(num) => {
+                setClimbHeight(num);
               }}
-
-              onPress={() => { checkShooter("Yes") }}
-            >
-              <Text>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: NoS,
-                borderRadius: 5,
-                width: 70, height: 30,
-                marginRight: 10, marginTop: 10,
-                justifyContent: 'center', alignItems: 'center'
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onSlidingComplete={(num) => {
+                setClimbHeight(num);
               }}
-
-              onPress={() => { checkShooter("No") }}
-            >
-              <Text>No</Text>
-            </TouchableOpacity>
+              allowTouchTrack
+              trackStyle={{ height: 10 }}
+              thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+            />
           </View>
 
+          <TextInput
+            placeholder="Please elaborate on their climb:"
+            keyboardType="keyboard"
+            value={climbElaboration}
+            onChangeText={(text) => setclimbElaboration(text)}
+            style={styles.Teaminput}
+          />
 
-          <Text style={styles.subHeader}>
-            ---- General Comments ----
+          <Text style={{ fontSize: 25, marginLeft: 40 }}>
+            What type of sensors are integrated into their robot? | [{sensors}]
           </Text>
-          <Text style={styles.textBoxComment}>Robot still being worked on</Text>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addSensor(" Limit Switches");
+            }}
+          >
+            <Text>Limit Switches</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addSensor(" Color Sensors");
+            }}
+          >
+            <Text>Color Sensors</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 117,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addSensor(" Proximity Sensors");
+            }}
+          >
+            <Text>Proximity Sensors</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addSensor(" Driver Camera");
+            }}
+          >
+            <Text>Driver Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addSensor(" Vision Camera");
+            }}
+          >
+            <Text>Vision Camera</Text>
+          </TouchableOpacity>
+
+          <Text style={{ fontSize: 25, marginLeft: 40 }}>
+            Which mechanisms are currently non-functional? | [
+            {nonFunctionalMech}]
+          </Text>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addMech(" Drivetrain");
+            }}
+          >
+            <Text> Drivetrain</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addMech(" Shooter");
+            }}
+          >
+            <Text> Shooter</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addMech(" Climb");
+            }}
+          >
+            <Text> Climb</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              addMech(" Vision/Sensors");
+            }}
+          >
+            <Text> Vision/Sensors</Text>
+          </TouchableOpacity>
+
+          <Text style={{ fontSize: 25, marginLeft: 40 }}>
+            Are they currently working on their robot?
+          </Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              inProgress("Yes");
+            }}
+          >
+            <Text>Yes</Text>
+          </TouchableOpacity>
+          {showInProgressTextInput()}
+          <TouchableOpacity
+            style={{
+              backgroundColor: "grey",
+              borderRadius: 5,
+              width: 100,
+              height: 30,
+              marginLeft: 150,
+              marginTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              inProgress("No");
+            }}
+          >
+            <Text>No</Text>
+          </TouchableOpacity>
+
           <TextInput
-            placeholder="enter"
-            style={styles.input}
-            multiline
-            onChangeText={onChangeText}
-            value={text}
-          />
-          <Text style={styles.textBoxComment}>Gracious professionalism</Text>
-          <TextInput
-            placeholder="enter"
-            style={styles.input}
-            multiline
-            onChangeText={onChangeText1}
-            value={text1}
-          />
-          <Text style={styles.textBoxComment}>Extra comments</Text>
-          <TextInput
-            placeholder="enter"
-            style={styles.input}
-            multiline
-            onChangeText={whatyougottasayaboutem}
-            value={comments}
+            placeholder="Location of electrical components"
+            keyboardType="keyboard"
+            value={electricalLocation}
+            onChangeText={(text) => setelectricalLocation(text)}
+            style={styles.Teaminput}
           />
 
-          <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 30 }}>
+          <TextInput
+            placeholder="Description of robot automation"
+            keyboardType="keyboard"
+            value={automationDescription}
+            onChangeText={(text) => setautomationDescription(text)}
+            style={styles.Teaminput}
+          />
 
-            <AntDesign name='close' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={handleCancel} />
-            <AntDesign name='check' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={() => { handlePitSubmit() }} />
-          </View>
+          <TextInput
+            placeholder="Additional Comments?"
+            keyboardType="keyboard"
+            value={additionalComments}
+            onChangeText={(text) => setAdditionalComments(text)}
+            style={styles.Teaminput}
+          />
+        {console.log(additionalComments)}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ScrollView>
@@ -302,37 +937,40 @@ const styles = StyleSheet.create({
     margin: 30,
     borderWidth: 2,
     padding: 10,
-
   },
 
   textBoxComment: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     fontSize: 20,
     marginLeft: 30,
-    marginBottom: -20
+    marginBottom: -20,
   },
   subHeader: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 40,
     fontSize: 30,
   },
   mechRow: {
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignSelf: "flex-start",
+  },
+  mechColumn: {
+    flexDirection: "column",
+    alignSelf: "flex-start",
     marginLeft: 45,
-    marginVertical: 15
+    marginVertical: 15,
   },
   mechText: {
     fontSize: 20,
     marginTop: 10,
-    marginRight: 15
+    marginRight: 15,
   },
   Teaminput: {
     height: 50,
     margin: 30,
     borderWidth: 2,
-    padding: 10, 
-},
+    padding: 10,
+  },
 });
 
 export default PitScouting;
