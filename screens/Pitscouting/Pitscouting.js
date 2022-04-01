@@ -90,6 +90,7 @@ const PitScouting = () => {
             placeholder="What mechanisms are being currently worked on?"
             onChangeText={(text) => setrobotInProgressDescription(text)}
             value={setrobotInProgressDescription}
+            multiline = {true}
           />
         </View>
       );
@@ -141,67 +142,110 @@ const PitScouting = () => {
   };
 
   const handlePitSubmit = () => {
-    createPitScoutingTable();
+
+    if (!name) {
+      alert("enter your name")
+      return;
+    }
+
+    if (!team) {
+      alert("enter the team number")
+      return;
+    }
+
+    let drivetrainType = drivetrain
+    if (drivetrain == "other") {
+      drivetrainType = drivetrainOther
+    }
+
+    let shooter = shooterType
+    if (shooterType == "Other") {
+      shooter = shooterTypeOther
+    }
+
+    let climb = "none"
+    if (climbHeight === 2) {
+      climb = "low"
+    }
+    if (climbHeight === 3) {
+      climb = "mid"
+    }
+    if (climbHeight === 4) {
+      climb = "high"
+    }
+    if (climbHeight === 5) {
+      climb = "traversal"
+    }
+
+    let sensorToString = sensors.toString();
+    let nonFunToString = nonFunctionalMech.toString();
+
+    let robotProgress = "not actively working on it"
+
+    if (robotInProgress) {
+      robotProgress = robotInProgressDescription
+    }
+
+
     let obj = [
       {
+        scouterName: name,
         teamNum: team,
-        visuals: Visualranking,
-        drivetrainType: drivetrain,
-        climbExist: climbExists,
-        shooterExist: shooterExists,
-        robotStatus: text,
-        graciousProfessionalism: text1,
-        extraComments: comments,
+        timeScouted: approxTime,
+        overallReview: review,
+        robustRanking: robustnessRanking,
+        driverExperience: driverExperience,
+        electricalOrangization: electricalOrangization,
+        mechComplexity: mechComplexity,
+        graciousProfessionalism: graciousProfessionalism,
+        organizationOfPit: organizationOfPit,
+        mechDescription: mechDescription,
+        drivetrain: drivetrainType,
+        shooterType: shooter,
+        shooterElaboration: shooterElaboration,
+        climb: climb,
+        climbElaboration: climbElaboration,
+        sensors: sensorToString,
+        nonFunctionalMechs: nonFunToString,
+        robotProgress: robotProgress,
+        electricalLocation: electricalLocation,
+        automationDescription: automationDescription,
+        additionalComments: additionalComments,
+
       },
     ];
 
-    db.transaction((tx) => {
-      tx.executeSql(
-        "INSERT INTO pitscouting (teamNum, visuals, drivetrainType, climbExists, shooterExists, robotStatus, graciousProfessionalism, extraComments) VALUES ('" +
-          team +
-          "', '" +
-          Visualranking +
-          "', '" +
-          drivetrain +
-          "', '" +
-          climbExists +
-          "', '" +
-          shooterExists +
-          "', '" +
-          text +
-          "', '" +
-          text1 +
-          "', '" +
-          comments +
-          "')"
-      );
-    });
-    // console.log(obj);
-    getDBData();
+
+    console.log(obj);
+    addPitData(obj)
     handleCancel();
   };
 
   const handleCancel = () => {
     navigation.navigate("Home");
   };
-  const getDBData = () => {
-    db.transaction((tx) => {
-      tx.executeSql("SELECT * FROM pitscouting", [], (tx, results) => {
-        console.log("results length: ", results.rows.length);
-        console.log("Query successful");
-        console.log(results.rows);
-      });
-    });
-  };
-  const createPitScoutingTable = () => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS " +
-          "pitscouting " +
-          "(ID INTEGER PRIMARY KEY AUTOINCREMENT, teamNum TEXT, visuals INTEGER, drivetrainType TEXT, climbExists TEXT, shooterExists TEXT, robotStatus TEXT, graciousProfessionalism TEXT, extraComments TEXT);"
-      );
-    });
-  };
+
+  const addPitData = async (newList) => {
+    const documentSnapshot = await firebase.firestore()
+      .collection("albanyData")
+      .doc("pitscouting")
+      .get()
+
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+
+    let finalList = existingData.concat(newList);
+
+    let finalObject = Object.assign({}, finalList)
+
+    firebaseAccess
+      .collection("albanyData")
+      .doc("pitscouting")
+      .set(finalObject)
+
+  }
+
+
+
 
   const checkClimb = (type) => {
     let selectedcolor1 = "#0782F9";
@@ -271,6 +315,7 @@ const PitScouting = () => {
             style={styles.textInput}
             placeholder="Enter Drivetrain"
             onChangeText={(text) => setdrivetrainOther(text)}
+            multiline = {true}
           />
         </View>
       );
@@ -286,6 +331,7 @@ const PitScouting = () => {
             style={styles.textInput}
             placeholder="Enter Shooter Type"
             onChangeText={(text) => setShooterTypeOther(text)}
+            multiline = {true}
           />
         </View>
       );
@@ -315,6 +361,11 @@ const PitScouting = () => {
     }
   };
 
+  const checkTeamLength = (text) => {
+    if (text.length < 5) {
+      setTeam(text)
+    }
+  }
   return (
     <ScrollView>
       <SafeAreaView>
@@ -323,19 +374,21 @@ const PitScouting = () => {
           behavior="padding" // try padding for ios maybe?
         >
           <TextInput
-            placeholder="Name"
+            placeholder="Your Name"
             keyboardType="keyboard"
             value={name}
             onChangeText={(text) => setName(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <TextInput
             placeholder="Team #"
             keyboardType="number-pad"
             value={team}
-            onChangeText={(text) => setTeam(text)}
+            onChangeText={(text) => checkTeamLength(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <TextInput
@@ -344,12 +397,14 @@ const PitScouting = () => {
             value={approxTime}
             onChangeText={(text) => setApproxTime(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <TextInput
             placeholder="Overall Review (optional)"
             keyboardType="default"
             value={review}
+            multiline = {true}
             onChangeText={(text) => setReview(text)}
             style={{ height: 100, margin: 30, borderWidth: 2, padding: 10 }}
           />
@@ -502,6 +557,7 @@ const PitScouting = () => {
             placeholder="Mechanisms Descriptions (optional)"
             keyboardType="default"
             value={mechDescription}
+            multiline = {true}
             onChangeText={(text) => setmechDiscription(text)}
             style={{ height: 100, margin: 30, borderWidth: 2, padding: 10 }}
           />
@@ -663,6 +719,7 @@ const PitScouting = () => {
             value={shooterElaboration}
             onChangeText={(text) => setShooterElaboration(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <View
@@ -696,6 +753,7 @@ const PitScouting = () => {
             value={climbElaboration}
             onChangeText={(text) => setclimbElaboration(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <Text style={{ fontSize: 25, marginLeft: 40 }}>
@@ -907,6 +965,7 @@ const PitScouting = () => {
             value={electricalLocation}
             onChangeText={(text) => setelectricalLocation(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <TextInput
@@ -915,6 +974,7 @@ const PitScouting = () => {
             value={automationDescription}
             onChangeText={(text) => setautomationDescription(text)}
             style={styles.Teaminput}
+            multiline = {true}
           />
 
           <TextInput
@@ -922,9 +982,17 @@ const PitScouting = () => {
             keyboardType="keyboard"
             value={additionalComments}
             onChangeText={(text) => setAdditionalComments(text)}
-            style={styles.Teaminput}
+            style={{ height: 100, margin: 30, borderWidth: 2, padding: 10 }}
+            multiline = {true}
           />
-        {console.log(additionalComments)}
+          {console.log(additionalComments)}
+
+
+          <View style={{ flexDirection: 'row', marginVertical: 40, alignSelf: 'center' }}>
+            <AntDesign name="closecircleo" size={50} onPress={handleCancel} color={"#0782F9"} style={{ marginHorizontal: 50 }} />
+
+            <AntDesign name="checkcircleo" size={50} onPress={handlePitSubmit} color={'#0782F9'} style={{ marginHorizontal: 50 }} />
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ScrollView>

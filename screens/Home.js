@@ -18,8 +18,8 @@ const Home = () => {
 
     const clearFireBase = () => {
         firebaseAccess
-            .collection(firebase.auth().currentUser.uid)
-            .doc('matchData')
+            .collection("albanyData")
+            .doc("matchScouting")
             .set({})
     }
 
@@ -40,8 +40,8 @@ const Home = () => {
         let pitData;
         try {
             const documentSnapshot = await firebase.firestore()
-                .collection(firebase.auth().currentUser.uid)
-                .doc('matchData')
+                .collection("albanyData")
+                .doc("matchScouting")
                 .get()
                 .then(
                     db.transaction((tx) => {
@@ -54,7 +54,7 @@ const Home = () => {
             existingData = Object.values(Object.seal(documentSnapshot.data()))
 
             const documentSnapshot1 = await firebase.firestore()
-                .collection(firebase.auth().currentUser.uid)
+                .collection("albanyData")
                 .doc('pitscouting')
                 .get()
                 .then(
@@ -141,10 +141,10 @@ const Home = () => {
     }
     const addNewData = async (newList) => {
         // console.log(newList)
-        console.log(firebase.auth().currentUser.uid)
+        console.log("albanyData")
         const documentSnapshot = await firebase.firestore()
-            .collection(firebase.auth().currentUser.uid)
-            .doc('matchData')
+            .collection("albanyData")
+            .doc("matchScouting")
             .get()
 
 
@@ -155,8 +155,8 @@ const Home = () => {
         let finalObject = Object.assign({}, finalList)
         // console.log(finalObject);
         firebaseAccess
-            .collection(firebase.auth().currentUser.uid)
-            .doc('matchData')
+            .collection("albanyData")
+            .doc("matchScouting")
             .set(finalObject)
             .then(clearDBData)
 
@@ -164,7 +164,7 @@ const Home = () => {
 
     const addPitScoutingData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-            .collection(firebase.auth().currentUser.uid)
+            .collection("albanyData")
             .doc('pitscouting')
             .get()
 
@@ -176,7 +176,7 @@ const Home = () => {
         let finalObject = Object.assign({}, finalList)
         // console.log(finalObject);
         firebaseAccess
-            .collection(firebase.auth().currentUser.uid)
+            .collection("albanyData")
             .doc('pitscouting')
             .set(finalObject)
             .then(clearDBData)
@@ -260,7 +260,7 @@ const Home = () => {
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Text style={styles.title} onPress={clearFireBase}>
+                <Text style={styles.title}>
                     Techno Titans
                 </Text>
 

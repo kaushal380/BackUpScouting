@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, Switch, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, Switch, ScrollView, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
 import { AntDesign, Entypo } from "@expo/vector-icons"
 import { Slider } from 'react-native-elements';
@@ -13,17 +13,24 @@ const DataCollect = () => {
     const [taxi, setTaxi] = useState(false)
     const [taxiSwitch, setTaxiSwitch] = useState(false)
     const [HumanPlayer, setHumanPlayer] = useState(false)
-    const [HumanSwitch, setHumanSwitch] = useState(false)
     const [Team, setTeam] = useState('')
     const [match, setMatch] = useState('')
     const [autoAttempted, setautoAttempted] = useState(0);
+    const [autoAttemptedLower, setautoAttemptedLower] = useState(0);
+    const [autoAttemptedHigher, setautoAttemptedHigher] = useState(0);
     const [AutoUpper, setAutoUpper] = useState(0);
     const [autoLower, setAutoLower] = useState(0);
     const [teleAttempted, setTeleAttempted] = useState(0);
+    const [teleAttemptedLower, setTeleAttemptedLower] = useState(0);
+    const [teleAttemptedHigher, setTeleAttemptedHigher] = useState(0);
     const [TeleUpper, setTeleUpper] = useState(0);
     const [TeleLower, setTeleLower] = useState(0);
 
     const [hangerAttempted, sethangerAttempted] = useState(false);
+    const [LowAttempted, setLowAttempted] = useState(false);
+    const [midAttempted, setMidAttempted] = useState(false);
+    const [highAttempted, setHighAttempted] = useState(false);
+    const [traversalAttempted, setTreversalAttempted] = useState(false);
     const [hanger, setHanger] = useState("");
     const [lowColor, setLowColor] = useState("white")
     const [midColor, setMidColor] = useState("white")
@@ -57,7 +64,7 @@ const DataCollect = () => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
                 + "dataCollect "
-                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoAttemptedShots INTEGER, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleAttemptedShots INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, climbAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, AutoAttemptedLower INTEGER, autoLowerCargo INTEGER, AutoAttemptedHiger INTEGER, autoUpperCargo INTEGER, teleAttemptedLower INTEGER, teleLowerCargo INTEGER, teleAttemptedHigher INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, LowClimbAttempted TEXT, midClimbAttempted TEXT, highClimbAttempted TEXT, traversalAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
             )
         })
     }
@@ -70,8 +77,8 @@ const DataCollect = () => {
         HumanPlayer === false ? setHumanPlayer(true) : setHumanPlayer(false)
     }
 
-    const handleAutoAttempted = (type) => {
-        let setNum = autoAttempted;
+    const handleAutoAttemptedLower = (type) => {
+        let setNum = autoAttemptedLower;
         if (type === "plus") {
             setNum++;
         }
@@ -80,12 +87,30 @@ const DataCollect = () => {
                 setNum--;
             }
             else {
-                setautoAttempted(setNum);
+                setautoAttemptedLower(setNum);
                 return;
             }
         }
-        setautoAttempted(setNum);
+        setautoAttemptedLower(setNum);
     }
+
+    const handleAutoAttemptedHigher = (type) => {
+        let setNum = autoAttemptedHigher;
+        if (type === "plus") {
+            setNum++;
+        }
+        else {
+            if (setNum > 0) {
+                setNum--;
+            }
+            else {
+                setautoAttemptedHigher(setNum);
+                return;
+            }
+        }
+        setautoAttemptedHigher(setNum);
+    }
+
     const handleCargoLower = (type) => {
         let setNum = autoLower;
         if (type === "plus") {
@@ -120,8 +145,8 @@ const DataCollect = () => {
         setAutoUpper(setNum)
     }
 
-    const handleTeleAttempted = (type) => {
-        let setNum = teleAttempted;
+    const handleTeleAttemptedLower = (type) => {
+        let setNum = teleAttemptedLower;
         if (type === "plus") {
             setNum++;
         }
@@ -130,11 +155,28 @@ const DataCollect = () => {
                 setNum--;
             }
             else {
-                setTeleAttempted(setNum);
+                setTeleAttemptedLower(setNum);
                 return;
             }
         }
-        setTeleAttempted(setNum);
+        setTeleAttemptedLower(setNum);
+    }
+
+    const handleTeleAttemptedHigher = (type) => {
+        let setNum = teleAttemptedHigher;
+        if (type === "plus") {
+            setNum++;
+        }
+        else {
+            if (setNum > 0) {
+                setNum--;
+            }
+            else {
+                setTeleAttemptedHigher(setNum);
+                return;
+            }
+        }
+        setTeleAttemptedHigher(setNum);
     }
 
     const handleCargoLowerTele = (type) => {
@@ -277,8 +319,18 @@ const DataCollect = () => {
         setShootLocationText(textVersion);
     }
 
-    const handleHangerAttempt = () => {
-        hangerAttempted === false ? sethangerAttempted(true) : sethangerAttempted(false)
+    const handleHangerAttemptLow = () => {
+        LowAttempted === false ? setLowAttempted(true) : setLowAttempted(false)
+    }
+
+    const handleHangerAttemptMid = () => {
+        midAttempted === false ? setMidAttempted(true) : setMidAttempted(false)
+    }
+    const handleHangerAttemptHigh = () => {
+        highAttempted === false ? setHighAttempted(true) : setHighAttempted(false)
+    }
+    const handleHangerAttemptTrav = () => {
+        traversalAttempted === false ? setTreversalAttempted(true) : setTreversalAttempted(false)
     }
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
@@ -368,14 +420,30 @@ const DataCollect = () => {
             isDisqualifiedToString = "true";
         }
 
-        let climbAttempted = "false";
-        if(hangerAttempted){
-            climbAttempted = "true";
+        let LowClimbAttempted = "false";
+        if (LowAttempted) {
+            LowClimbAttempted = "true";
         }
+
+        let midClimbAttempted = "false";
+        if (midAttempted) {
+            midClimbAttempted = "true";
+        }
+
+        let highClimbAttempted = "false";
+        if (highAttempted) {
+            highClimbAttempted = "true";
+        }
+
+        let traversalAtt = "false";
+        if (traversalAttempted) {
+            traversalAtt = "true";
+        }
+
         createTable();
         db.transaction((tx) => {
             tx.executeSql(
-                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, autoAttemptedShots, autoLowerCargo, autoUpperCargo, teleAttemptedShots, teleLowerCargo, teleUpperCargo, shootingLocation, climbAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttempted + "', '" + autoLower + "', '" + AutoUpper + "', '" + teleAttempted + "', '" + TeleLower + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + climbAttempted + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
+                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, AutoAttemptedLower, autoLowerCargo, AutoAttemptedHiger, autoUpperCargo, teleAttemptedLower, teleLowerCargo, teleAttemptedHigher, teleUpperCargo, shootingLocation, LowClimbAttempted, midClimbAttempted, highClimbAttempted ,traversalAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttemptedLower + "', '" + autoLower + "', '" + autoAttemptedHigher + "', '" + AutoUpper + "', '" + teleAttemptedLower + "', '" + TeleLower + "', '" + teleAttemptedHigher + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + LowClimbAttempted + "', '" + midClimbAttempted + "', '" + highClimbAttempted + "', '" + traversalAtt + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
             )
         })
         getDBData();
@@ -410,399 +478,469 @@ const DataCollect = () => {
     return (
         <>
             <ScrollView>
-                <View style={{ backgroundColor: '#dedbd5' }}>
+                <KeyboardAvoidingView
+                    // style={styles.container}
+                    behavior="padding" // try padding for ios maybe?
+                >
+                    <View style={{ backgroundColor: '#dedbd5' }}>
 
-                    <Text style={{ fontSize: 40, alignSelf: 'center' }}>data collection</Text>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 50 }}>
-                        <TextInput
-                            placeholder="Team #"
-                            keyboardType="number-pad"
-                            value={Team}
-                            onChangeText={text => checkTeamLength(text)}
-                            style={styles.input}
-                        />
-                        <TextInput
-                            placeholder="Match #"
-                            keyboardType="number-pad"
-                            value={match}
-                            onChangeText={text => checkMatchLength(text)}
-                            style={styles.input1}
-                        />
-                    </View>
-
-                    <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
-                        ----  Autonomous  ----
-                    </Text>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-                        <Text style={{ fontSize: 25 }}>Taxi: </Text>
-                        {/* add human player shot*/}
-                        <Switch
-                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
-                            trackColor={{ false: "grey", true: "grey" }}//#767577
-                            thumbColor={taxi ? "black" : "black"}//#f5dd4b
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={handleTaxi}
-                            value={taxiSwitch}
-                        />
-                    </View>
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-                        <Text style={{ fontSize: 25 }}>Human Player Shot: </Text>
-                        {/* add human player shot*/}
-                        <Switch
-                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
-                            trackColor={{ false: "grey", true: "grey" }}//#767577
-                            thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={handleHuman}
-                            value={HumanPlayer}
-                        />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>attempted shots: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleAutoAttempted("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{autoAttempted}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttempted('plus')} />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLower("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{autoLower}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLower('plus')} />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpper("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{AutoUpper}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpper('plus')} />
-                    </View>
-
-                    <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
-                        ----  Teleop  ----
-                    </Text>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>attempted shots: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleTeleAttempted("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{teleAttempted}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttempted('plus')} />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLowerTele("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{TeleLower}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLowerTele('plus')} />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <View>
-                            <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
-                        </View>
-
-                        <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpperTele("other")} />
-                        <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                            <Text>{TeleUpper}</Text>
-                        </TouchableOpacity>
-                        <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpperTele('plus')} />
-                    </View>
-
-                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-                        <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: nearColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleShootLocation("near") }}
-                            >
-                                <Text>near</Text>
-                            </TouchableOpacity>
-
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: middleColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleShootLocation("middle") }}
-                            >
-                                <Text>middle</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: farColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleShootLocation("far") }}
-                            >
-                                <Text>far</Text>
-
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: anyColor,
-                                    borderRadius: 5,
-                                    width: 80, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleShootLocation("any") }}
-                            >
-                                <Text>anywhere</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
-                        ---- Hanger ----
-                    </Text>
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-
-                        <Text style={{ fontSize: 25 }}>climb attempted?   : </Text>
-                        {/* add human player shot*/}
-                        <Switch
-                            style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
-                            trackColor={{ false: "grey", true: "grey" }}//#767577
-                            thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={handleHangerAttempt}
-                            value={hangerAttempted}
-                        />
-                    </View>
-                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
-                        <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
-
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: noneColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleHanger("none") }}
-                            >
-                                <Text>None</Text>
-                            </TouchableOpacity>
-
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: lowColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleHanger("low") }}
-                            >
-                                <Text>Low</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: midColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleHanger("mid") }}
-                            >
-                                <Text>Mid</Text>
-
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: highColor,
-                                    borderRadius: 5,
-                                    width: 50, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleHanger("high") }}
-                            >
-                                <Text>High</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: treversalColor,
-                                    borderRadius: 5,
-                                    width: 80, height: 30,
-                                    marginRight: 10, marginTop: 10,
-                                    justifyContent: 'center', alignItems: 'center'
-                                }}
-
-                                onPress={() => { handleHanger("t") }}
-                            >
-                                <Text>Traversal</Text>
-                            </TouchableOpacity>
-
-                        </View>
-                        <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30 }}>
-                            ---- Defense ----
-                        </Text>
-
-                        <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
-                            <Text style={{ fontSize: 25 }}>Defense ranking : {DefenseRanking}</Text>
-                            <Slider
-                                value={DefenseRanking}
-                                onValueChange={(num) => { setDefenceRanking(num) }}
-                                minimumValue={1}
-                                maximumValue={5}
-                                step={1}
-                                onSlidingComplete={(num) => { setDefenceRanking(num) }}
-                                allowTouchTrack
-                                trackStyle={{ height: 10 }}
-                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                        <Text style={{ fontSize: 40, alignSelf: 'center' }}>data collection</Text>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 50 }}>
+                            <TextInput
+                                placeholder="Team #"
+                                keyboardType="number-pad"
+                                value={Team}
+                                onChangeText={text => checkTeamLength(text)}
+                                style={styles.input}
+                            />
+                            <TextInput
+                                placeholder="Match #"
+                                keyboardType="number-pad"
+                                value={match}
+                                onChangeText={text => checkMatchLength(text)}
+                                style={styles.input1}
                             />
                         </View>
-                    </View>
 
-                    <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
+                            ----  Autonomous  ----
+                        </Text>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ fontSize: 25 }}>Taxi: </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={handleTaxi}
+                                value={taxiSwitch}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ fontSize: 25 }}>Human Player Shot: </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={handleHuman}
+                                value={HumanPlayer}
+                            />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Attempted Lower: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleAutoAttemptedLower("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{autoAttemptedLower}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttemptedLower('plus')} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLower("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{autoLower}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLower('plus')} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Attempted Higher: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleAutoAttemptedHigher("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{autoAttemptedHigher}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttemptedHigher('plus')} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpper("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{AutoUpper}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpper('plus')} />
+                        </View>
+
+                        <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30 }}>
+                            ----  Teleop  ----
+                        </Text>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Attempted Lower: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleTeleAttemptedLower("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{teleAttemptedLower}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttemptedLower('plus')} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoLowerTele("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{TeleLower}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLowerTele('plus')} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Attempted Higher: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleTeleAttemptedHigher("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{teleAttemptedHigher}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttemptedHigher('plus')} />
+                        </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <View>
+                                <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
+                            </View>
+
+                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleCargoUpperTele("other")} />
+                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text>{TeleUpper}</Text>
+                            </TouchableOpacity>
+                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpperTele('plus')} />
+                        </View>
+
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
+                            <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: nearColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleShootLocation("near") }}
+                                >
+                                    <Text>near</Text>
+                                </TouchableOpacity>
+
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: middleColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleShootLocation("middle") }}
+                                >
+                                    <Text>middle</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: farColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleShootLocation("far") }}
+                                >
+                                    <Text>far</Text>
+
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: anyColor,
+                                        borderRadius: 5,
+                                        width: 80, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleShootLocation("any") }}
+                                >
+                                    <Text>anywhere</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                         <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
-                            ---- Penalities ----
+                            ---- Hanger ----
                         </Text>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25 }}>TechFoul: </Text>
-
-
-                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("tech", "minus")} />
-                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>{techFoul}</Text>
-                            </TouchableOpacity>
-                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("tech", "plus")} />
-                        </View>
-
-                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25 }}>YelloCards: </Text>
-
-
-                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("yellow", "minus")} />
-                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>{YelloCard}</Text>
-                            </TouchableOpacity>
-                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("yellow", "plus")} />
-                        </View>
-
-                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25 }}>RedCards: </Text>
-
-
-                            <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("red", "minus")} />
-                            <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>{RedCard}</Text>
-                            </TouchableOpacity>
-                            <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("red", "plus")} />
-                        </View>
-
-                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25, marginRight: 10 }}>Deactivated/Broken: </Text>
+                            <Text style={{ fontSize: 25 }}>Low attempted?   : </Text>
                             {/* add human player shot*/}
                             <Switch
                                 style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                                 trackColor={{ false: "grey", true: "grey" }}//#767577
-                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
                                 ios_backgroundColor="#3e3e3e"
-                                value={isDeactivatedSwtich}
-                                onValueChange={handleDeactivation}
+                                onValueChange={handleHangerAttemptLow}
+                                value={LowAttempted}
                             />
                         </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
-                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Text style={{ fontSize: 25, marginRight: 10 }}>Disqualified: </Text>
+                            <Text style={{ fontSize: 25 }}>mid attempted?   : </Text>
                             {/* add human player shot*/}
                             <Switch
                                 style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
                                 trackColor={{ false: "grey", true: "grey" }}//#767577
-                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
                                 ios_backgroundColor="#3e3e3e"
-                                value={isDisqualifiedSwitch}
-                                onValueChange={handleDisqualify}
+                                onValueChange={handleHangerAttemptMid}
+                                value={midAttempted}
                             />
                         </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <Text style={{ fontSize: 25 }}>high attempted?   : </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={handleHangerAttemptHigh}
+                                value={highAttempted}
+                            />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+
+                            <Text style={{ fontSize: 25 }}>traversal attempted?   : </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={handleHangerAttemptTrav}
+                                value={traversalAttempted}
+                            />
+                        </View>
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
+
+                            <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: noneColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleHanger("none") }}
+                                >
+                                    <Text>None</Text>
+                                </TouchableOpacity>
+
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: lowColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleHanger("low") }}
+                                >
+                                    <Text>Low</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: midColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleHanger("mid") }}
+                                >
+                                    <Text>Mid</Text>
+
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: highColor,
+                                        borderRadius: 5,
+                                        width: 50, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleHanger("high") }}
+                                >
+                                    <Text>High</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: treversalColor,
+                                        borderRadius: 5,
+                                        width: 80, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleHanger("t") }}
+                                >
+                                    <Text>Traversal</Text>
+                                </TouchableOpacity>
+
+                            </View>
+                            <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30 }}>
+                                ---- Defense ----
+                            </Text>
+
+                            <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
+                                <Text style={{ fontSize: 25 }}>Defense ranking : {DefenseRanking}</Text>
+                                <Slider
+                                    value={DefenseRanking}
+                                    onValueChange={(num) => { setDefenceRanking(num) }}
+                                    minimumValue={1}
+                                    maximumValue={5}
+                                    step={1}
+                                    onSlidingComplete={(num) => { setDefenceRanking(num) }}
+                                    allowTouchTrack
+                                    trackStyle={{ height: 10 }}
+                                    thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
+                                ---- Penalities ----
+                            </Text>
+
+                            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                                <Text style={{ fontSize: 25 }}>TechFoul: </Text>
+
+
+                                <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("tech", "minus")} />
+                                <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text>{techFoul}</Text>
+                                </TouchableOpacity>
+                                <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("tech", "plus")} />
+                            </View>
+
+                            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                                <Text style={{ fontSize: 25 }}>YelloCards: </Text>
+
+
+                                <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("yellow", "minus")} />
+                                <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text>{YelloCard}</Text>
+                                </TouchableOpacity>
+                                <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("yellow", "plus")} />
+                            </View>
+
+                            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                                <Text style={{ fontSize: 25 }}>RedCards: </Text>
+
+
+                                <AntDesign name='minus' size={35} color={'grey'} style={{ marginTop: 0, marginRight: 5 }} onPress={() => handleNumPenalities("red", "minus")} />
+                                <TouchableOpacity style={{ backgroundColor: 'white', borderRadius: 4, width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text>{RedCard}</Text>
+                                </TouchableOpacity>
+                                <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleNumPenalities("red", "plus")} />
+                            </View>
+
+                            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                                <Text style={{ fontSize: 25, marginRight: 10 }}>Deactivated/Broken: </Text>
+                                {/* add human player shot*/}
+                                <Switch
+                                    style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                    trackColor={{ false: "grey", true: "grey" }}//#767577
+                                    thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                    ios_backgroundColor="#3e3e3e"
+                                    value={isDeactivatedSwtich}
+                                    onValueChange={handleDeactivation}
+                                />
+                            </View>
+
+                            <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                                <Text style={{ fontSize: 25, marginRight: 10 }}>Disqualified: </Text>
+                                {/* add human player shot*/}
+                                <Switch
+                                    style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                    trackColor={{ false: "grey", true: "grey" }}//#767577
+                                    thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                    ios_backgroundColor="#3e3e3e"
+                                    value={isDisqualifiedSwitch}
+                                    onValueChange={handleDisqualify}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={{ alignSelf: 'center', justifyContent: 'center', marginTop: 60 }}>
+                            <Text style={{ fontSize: 30, alignSelf: 'center' }}>---- comments ----</Text>
+
+
+                            <TextInput
+                                placeholder="exta comments"
+                                value={comments}
+                                onChangeText={text => setComments(text)}
+                                style={styles.comments}
+                                multiline={true}
+
+                            />
+
+                        </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', marginVertical: 40 }}>
+
+                            <AntDesign name='closecircleo' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { navigation.navigate("Home") }} />
+                            <AntDesign name='checkcircleo' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
+                        </View>
+
                     </View>
-
-                    <View style={{ alignSelf: 'center', justifyContent: 'center', marginTop: 60 }}>
-                        <Text style={{ fontSize: 30, alignSelf: 'center' }}>---- comments ----</Text>
-
-
-                        <TextInput
-                            placeholder="exta comments"
-                            value={comments}
-                            onChangeText={text => setComments(text)}
-                            style={styles.comments}
-                            multiline={true}
-
-                        />
-
-                    </View>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 30 }}>
-
-                        <AntDesign name='close' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { navigation.navigate("Home") }} />
-                        <AntDesign name='check' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
-                    </View>
-
-                </View>
+                </KeyboardAvoidingView>
             </ScrollView >
         </>
     )
