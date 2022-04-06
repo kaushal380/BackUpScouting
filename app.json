@@ -4,6 +4,7 @@
     "slug": "TitanScoutingApp",
     "version": "1.0.7",
     "orientation": "portrait",
+    "owner": "techno-titans",
     "icon": "./assets/Images/logo_512x512.png",
     "splash": {
       "image": "./assets/Images/logo_512x512.png",
@@ -20,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "technotitans.scoutingapp"
     },
-    "description": "testing in progress",
+    "description": "scouting for rapid react",
     "android": {
       "package": "technotitans.scoutingapp",
       "versionCode": 7,

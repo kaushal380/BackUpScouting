@@ -440,16 +440,64 @@ const DataCollect = () => {
             traversalAtt = "true";
         }
 
-        createTable();
-        db.transaction((tx) => {
-            tx.executeSql(
-                "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, AutoAttemptedLower, autoLowerCargo, AutoAttemptedHiger, autoUpperCargo, teleAttemptedLower, teleLowerCargo, teleAttemptedHigher, teleUpperCargo, shootingLocation, LowClimbAttempted, midClimbAttempted, highClimbAttempted ,traversalAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttemptedLower + "', '" + autoLower + "', '" + autoAttemptedHigher + "', '" + AutoUpper + "', '" + teleAttemptedLower + "', '" + TeleLower + "', '" + teleAttemptedHigher + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + LowClimbAttempted + "', '" + midClimbAttempted + "', '" + highClimbAttempted + "', '" + traversalAtt + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
-            )
-        })
-        getDBData();
+        // createTable();
+        // db.transaction((tx) => {
+        //     tx.executeSql(
+        //         "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, AutoAttemptedLower, autoLowerCargo, AutoAttemptedHiger, autoUpperCargo, teleAttemptedLower, teleLowerCargo, teleAttemptedHigher, teleUpperCargo, shootingLocation, LowClimbAttempted, midClimbAttempted, highClimbAttempted ,traversalAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttemptedLower + "', '" + autoLower + "', '" + autoAttemptedHigher + "', '" + AutoUpper + "', '" + teleAttemptedLower + "', '" + TeleLower + "', '" + teleAttemptedHigher + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + LowClimbAttempted + "', '" + midClimbAttempted + "', '" + highClimbAttempted + "', '" + traversalAtt + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
+        //     )
+        // })
+
+        let obj = {
+            matchNum: match,
+            teamNum: Team,
+            taxi: taxiToString,
+            humanShotL: humanShotToText,
+            autoAttemptedLower: autoAttemptedLower,
+            autoLowerCargo: autoLower,
+            AutoAttemptedHiger: autoAttemptedHigher,
+            autoUpperCargo: AutoUpper,
+            teleAttemptedLower: teleAttemptedLower,
+            teleLowerCargo: TeleLower,
+            teleUpperCargo: TeleUpper,
+            shootLocation: shootLocationText,
+            LowClimbAttempted: LowClimbAttempted,
+            midClimbAttempted: midClimbAttempted,
+            highClimbAttempted: highClimbAttempted,
+            traversalAttempted: traversalAtt,
+            climb: hanger,
+            defenseRanking: DefenseRanking,
+            redCard: RedCard,
+            yelloCard: YelloCard,
+            techFouls: techFoul,
+            deactivated: isDeactivatedToString,
+            disqualified: isDisqualifiedToString,
+            extraComments: comments
+        }
+
+        insertData(obj);
+        // getDBData();
         navigation.navigate("Home")
     }
 
+    const insertData = async (newList) => {
+        const documentSnapshot = await firebase.firestore()
+            .collection("albanyData")
+            .doc("matchScouting")
+            .get()
+
+
+        let existingData = Object.values(Object.seal(documentSnapshot.data()))
+
+        let finalList = existingData.concat(newList)
+
+        let finalObject = Object.assign({}, finalList)
+        const firebaseAccess = firebase.firestore()
+
+        firebaseAccess 
+            .collection("albanyData")
+            .doc("matchScouting")
+            .set(finalObject)
+    }
     const getDBData = () => {
         db.transaction((tx) => {
             tx.executeSql(
