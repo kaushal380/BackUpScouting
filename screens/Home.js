@@ -19,7 +19,7 @@ const Home = () => {
     const clearFireBase = () => {
         firebaseAccess
             .collection("macon2022")
-            .doc("matchScouting")
+            .doc("pitscouting")
             .set({})
     }
 
@@ -260,7 +260,9 @@ const Home = () => {
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Text style={styles.title}>
+                <Text style={styles.title}
+                onPress = {clearFireBase}
+                >
                     Techno Titans
                 </Text>
 

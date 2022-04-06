@@ -39,6 +39,7 @@ const DataCollect = () => {
     const [noneColor, setNoneColor] = useState("white")
 
     const [shootLocation, setShootLocation] = useState([]);
+    const [shootFromOtherSide, setShootFromOtherSide] = useState(false);
     const [shootLocationText, setShootLocationText] = useState("");
     const [nearColor, setNearColor] = useState("white");
     const [middleColor, setMiddleColor] = useState("white");
@@ -115,8 +116,11 @@ const DataCollect = () => {
 
     const handleCargoLower = (type) => {
         let setNum = autoLower;
+        let setAttempted = autoAttemptedLower
         if (type === "plus") {
             setNum++;
+            setAttempted++;
+            setautoAttemptedLower(setAttempted)
         }
         else {
             if (setNum > 0) {
@@ -132,8 +136,11 @@ const DataCollect = () => {
 
     const handleCargoUpper = (type) => {
         let setNum = AutoUpper;
+        let setAttempted = autoAttemptedHigher
         if (type === "plus") {
             setNum++;
+            setAttempted++;
+            setautoAttemptedHigher(setAttempted)
         }
         else {
             if (setNum > 0) {
@@ -183,8 +190,11 @@ const DataCollect = () => {
 
     const handleCargoLowerTele = (type) => {
         let setNum = TeleLower;
+        let setAttempted = teleAttemptedLower
         if (type === "plus") {
             setNum++;
+            setAttempted++;
+            setTeleAttemptedLower(setAttempted)
         }
         else {
             if (setNum > 0) {
@@ -199,8 +209,11 @@ const DataCollect = () => {
     }
     const handleCargoUpperTele = (type) => {
         let setNum = TeleUpper;
+        let setAttempted = teleAttemptedHigher
         if (type === "plus") {
             setNum++;
+            setAttempted++;
+            setTeleAttemptedHigher(setAttempted);
         }
         else {
             if (setNum > 0) {
@@ -246,6 +259,9 @@ const DataCollect = () => {
 
     }
 
+    const handleShootAreaCheck = () => {
+        shootFromOtherSide === false? setShootFromOtherSide(true): setShootFromOtherSide(false);
+    }
     const handleShootLocation = (type) => {
         let selectedColor = "#0782F9";
         let currentList = shootLocation;
@@ -273,11 +289,11 @@ const DataCollect = () => {
             }
             if (middleColor === "white") {
                 setMiddleColor(selectedColor);
-                currentList = [...currentList, "between"];
+                currentList = [...currentList, "between the fender and the tarmac"];
             }
             else if (middleColor === selectedColor) {
                 setMiddleColor("white");
-                const index = currentList.findIndex((item) => item === "between");
+                const index = currentList.findIndex((item) => item === "between the fender and the tarmac");
                 currentList.splice(index, 1);
             }
         }
@@ -476,6 +492,11 @@ const DataCollect = () => {
             traversalAtt = "true";
         }
 
+        let shootOtherSide = "false";
+        if(shootFromOtherSide){
+            shootOtherSide = "true";
+        }
+
         // createTable();
         // db.transaction((tx) => {
         //     tx.executeSql(
@@ -495,6 +516,7 @@ const DataCollect = () => {
             teleAttemptedLower: teleAttemptedLower,
             teleLowerCargo: TeleLower,
             teleUpperCargo: TeleUpper,
+            canShootFromOtherSide: shootOtherSide,
             shootLocation: shootLocationText,
             LowClimbAttempted: LowClimbAttempted,
             midClimbAttempted: midClimbAttempted,
@@ -590,7 +612,7 @@ const DataCollect = () => {
                             ----  Autonomous  ----
                         </Text>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
                             <Text style={{ fontSize: 25 }}>Taxi: </Text>
                             {/* add human player shot*/}
                             <Switch
@@ -602,7 +624,7 @@ const DataCollect = () => {
                                 value={taxiSwitch}
                             />
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
                             <Text style={{ fontSize: 25 }}>Human Player Shot: </Text>
                             {/* add human player shot*/}
                             <Switch
@@ -615,7 +637,7 @@ const DataCollect = () => {
                             />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Attempted Lower: </Text>
@@ -628,7 +650,7 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttemptedLower('plus')} />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
@@ -641,7 +663,7 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLower('plus')} />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Attempted Higher: </Text>
@@ -654,7 +676,7 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleAutoAttemptedHigher('plus')} />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
@@ -671,7 +693,7 @@ const DataCollect = () => {
                             ----  Teleop  ----
                         </Text>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Attempted Lower: </Text>
@@ -684,7 +706,7 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttemptedLower('plus')} />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Cargo Lower: </Text>
@@ -697,7 +719,7 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoLowerTele('plus')} />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Attempted Higher: </Text>
@@ -709,7 +731,7 @@ const DataCollect = () => {
                             </TouchableOpacity>
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleTeleAttemptedHigher('plus')} />
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <View>
                                 <Text style={{ fontSize: 25 }}>Cargo Higher: </Text>
@@ -722,7 +744,20 @@ const DataCollect = () => {
                             <AntDesign name='plus' size={35} color={'grey'} style={{ marginTop: 0, marginLeft: 5 }} onPress={() => handleCargoUpperTele('plus')} />
                         </View>
 
-                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
+                            <Text style={{ fontSize: 25 }}>shoot from other side? </Text>
+                            {/* add human player shot*/}
+                            <Switch
+                                style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                trackColor={{ false: "grey", true: "grey" }}//#767577
+                                thumbColor={taxi ? "black" : "black"}//#f5dd4b
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={handleShootAreaCheck}
+                                value={shootFromOtherSide}
+                            />
+                        </View>
+
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
                             <Text style={{ fontSize: 25 }}>Shooting Location: {"\n"}{shootLocationText}</Text>
                             <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
                                 <TouchableOpacity
@@ -820,7 +855,7 @@ const DataCollect = () => {
                         <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
                             ---- Hanger ----
                         </Text>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <Text style={{ fontSize: 25 }}>Low attempted?   : </Text>
                             {/* add human player shot*/}
@@ -833,7 +868,7 @@ const DataCollect = () => {
                                 value={LowAttempted}
                             />
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <Text style={{ fontSize: 25 }}>mid attempted?   : </Text>
                             {/* add human player shot*/}
@@ -846,7 +881,7 @@ const DataCollect = () => {
                                 value={midAttempted}
                             />
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <Text style={{ fontSize: 25 }}>high attempted?   : </Text>
                             {/* add human player shot*/}
@@ -860,7 +895,7 @@ const DataCollect = () => {
                             />
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
 
                             <Text style={{ fontSize: 25 }}>traversal attempted?   : </Text>
                             {/* add human player shot*/}
@@ -873,7 +908,7 @@ const DataCollect = () => {
                                 value={traversalAttempted}
                             />
                         </View>
-                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
                             <Text style={{ fontSize: 25 }}>Hanger: {hanger}</Text>
 
                             <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
@@ -971,7 +1006,7 @@ const DataCollect = () => {
                             </View>
                         </View>
 
-                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                        <View style={{ alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
                             <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
                                 ---- Penalities ----
                             </Text>
@@ -1052,8 +1087,8 @@ const DataCollect = () => {
                         </View>
                         <View style={{ flexDirection: 'row', alignSelf: 'center', marginVertical: 40 }}>
 
-                            <AntDesign name='closecircleo' size={45} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { navigation.navigate("Home") }} />
-                            <AntDesign name='checkcircleo' size={45} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
+                            <AntDesign name='closecircleo' size={40} color={'#0782F9'} style={{ marginRight: 60 }} onPress={() => { navigation.navigate("Home") }} />
+                            <AntDesign name='checkcircleo' size={40} color={'#0782F9'} style={{ marginLeft: 60 }} onPress={handleModalConfirm} />
                         </View>
 
                     </View>
