@@ -2,7 +2,7 @@
   "expo": {
     "name": "Techno Titans Scouting",
     "slug": "TitanScoutingApp",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "orientation": "portrait",
     "owner": "techno-titans",
     "icon": "./assets/Images/logo_512x512.png",
@@ -21,10 +21,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "technotitans.scoutingapp"
     },
-    "description": "scouting for rapid react",
+    "description": "An application for Techno Titan members to collect data during competition.",
     "android": {
       "package": "technotitans.scoutingapp",
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
