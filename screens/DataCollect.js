@@ -924,7 +924,7 @@ const DataCollect = () => {
 
 
                             <TextInput
-                                placeholder="exta comments"
+                                placeholder="extra comments"
                                 value={comments}
                                 onChangeText={text => setComments(text)}
                                 style={styles.comments}
