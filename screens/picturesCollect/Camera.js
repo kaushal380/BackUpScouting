@@ -4,7 +4,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { Camera } from 'expo-camera';
 
 export const CameraComponent = ({image, setImage}) => {
-
     //TODO: Multiple Photos? Record video functionality 
     let camera
     // const [image, setImage] = useState(null);
@@ -17,7 +16,7 @@ export const CameraComponent = ({image, setImage}) => {
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
-            quality: 1,
+            quality: 0.01,
         });
 
         if (!result.cancelled) {
@@ -36,8 +35,7 @@ export const CameraComponent = ({image, setImage}) => {
     }
 
     const takePhoto = async () => {
-        const { uri } = await camera.takePictureAsync({ quality: 1 });
-        // console.log(uri)
+        const { uri } = await camera.takePictureAsync({ quality: 0.05 });
         setImage(uri);
     }
 
@@ -67,7 +65,7 @@ export const CameraComponent = ({image, setImage}) => {
                     <Text style={styles.Buttontext}>Pick an image from camera roll</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.ButtonsContainer} onPress={requestPermission}>
-                    <Text style={styles.Buttontext}>Take a picture or video</Text>
+                    <Text style={styles.Buttontext}>Take a picture</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -89,9 +87,6 @@ export const CameraComponent = ({image, setImage}) => {
     } else {
         return normalView;
     }
-
-
-
 }
 
 const styles = StyleSheet.create({
