@@ -43,6 +43,8 @@ const DataCollect = () => {
     const [nearColor, setNearColor] = useState("white");
     const [middleColor, setMiddleColor] = useState("white");
     const [farColor, setFarColor] = useState("white");
+    const [slightlyColor, setSlightlyColor] = useState("white");
+    const [climbColor, setClimbColor] = useState("white");
     const [anyColor, setAnyColor] = useState("white");
 
     const [Drivetrainranking, setDrivetrainranking] = useState(1);
@@ -247,7 +249,7 @@ const DataCollect = () => {
     const handleShootLocation = (type) => {
         let selectedColor = "#0782F9";
         let currentList = shootLocation;
-        if (type === "near") {
+        if (type === "up the fender") {
             if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
@@ -255,15 +257,15 @@ const DataCollect = () => {
             }
             if (nearColor === "white") {
                 setNearColor(selectedColor);
-                currentList = [...currentList, "near"];
+                currentList = [...currentList, "up the fender"];
             }
             else if (nearColor === selectedColor) {
                 setNearColor("white");
-                const index = currentList.findIndex((item) => item === "near")
+                const index = currentList.findIndex((item) => item === "up the fender")
                 currentList.splice(index, 1);
             }
         }
-        if (type === "middle") {
+        if (type === "between") {
             if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
@@ -271,15 +273,15 @@ const DataCollect = () => {
             }
             if (middleColor === "white") {
                 setMiddleColor(selectedColor);
-                currentList = [...currentList, "middle"];
+                currentList = [...currentList, "between"];
             }
             else if (middleColor === selectedColor) {
                 setMiddleColor("white");
-                const index = currentList.findIndex((item) => item === "middle");
+                const index = currentList.findIndex((item) => item === "between");
                 currentList.splice(index, 1);
             }
         }
-        if (type === "far") {
+        if (type === "tarmac line") {
             if (currentList.includes("anywhere", 0)) {
                 setAnyColor("white")
                 const index = currentList.findIndex((item) => item === "anywhere");
@@ -287,11 +289,43 @@ const DataCollect = () => {
             }
             if (farColor === "white") {
                 setFarColor(selectedColor);
-                currentList = [...currentList, "far"];
+                currentList = [...currentList, "tarmac line"];
             }
             else if (farColor === selectedColor) {
                 setFarColor("white");
-                const index = currentList.findIndex((item) => item === "far");
+                const index = currentList.findIndex((item) => item === "tarmac line");
+                currentList.splice(index, 1);
+            }
+        }
+        if (type === "slightly") {
+            if (currentList.includes("anywhere", 0)) {
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index, 1);
+            }
+            if (slightlyColor === "white") {
+                setSlightlyColor(selectedColor);
+                currentList = [...currentList, "slightly"];
+            }
+            else if (slightlyColor === selectedColor) {
+                setSlightlyColor("white");
+                const index = currentList.findIndex((item) => item === "slightly")
+                currentList.splice(index, 1);
+            }
+        }
+        if (type === "climb") {
+            if (currentList.includes("anywhere", 0)) {
+                setAnyColor("white")
+                const index = currentList.findIndex((item) => item === "anywhere");
+                currentList.splice(index, 1);
+            }
+            if (climbColor === "white") {
+                setClimbColor(selectedColor);
+                currentList = [...currentList, "climb"];
+            }
+            else if (climbColor === selectedColor) {
+                setClimbColor("white");
+                const index = currentList.findIndex((item) => item === "climb")
                 currentList.splice(index, 1);
             }
         }
@@ -302,6 +336,8 @@ const DataCollect = () => {
                 setNearColor("white");
                 setMiddleColor("white");
                 setFarColor("white");
+                setSlightlyColor("white");
+                setClimbColor("white");
             }
             else if (anyColor === selectedColor) {
                 setAnyColor("white")
@@ -693,14 +729,14 @@ const DataCollect = () => {
                                     style={{
                                         backgroundColor: nearColor,
                                         borderRadius: 5,
-                                        width: 50, height: 30,
+                                        width: 100, height: 30,
                                         marginRight: 10, marginTop: 10,
                                         justifyContent: 'center', alignItems: 'center'
                                     }}
 
-                                    onPress={() => { handleShootLocation("near") }}
+                                    onPress={() => { handleShootLocation("up the fender") }}
                                 >
-                                    <Text>near</Text>
+                                    <Text>up the fender</Text>
                                 </TouchableOpacity>
 
 
@@ -708,31 +744,63 @@ const DataCollect = () => {
                                     style={{
                                         backgroundColor: middleColor,
                                         borderRadius: 5,
-                                        width: 50, height: 30,
+                                        width: 70, height: 30,
                                         marginRight: 10, marginTop: 10,
                                         justifyContent: 'center', alignItems: 'center'
                                     }}
 
-                                    onPress={() => { handleShootLocation("middle") }}
+                                    onPress={() => { handleShootLocation("between") }}
                                 >
-                                    <Text>middle</Text>
+                                    <Text>between</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={{
                                         backgroundColor: farColor,
                                         borderRadius: 5,
-                                        width: 50, height: 30,
+                                        width: 80, height: 30,
                                         marginRight: 10, marginTop: 10,
                                         justifyContent: 'center', alignItems: 'center'
                                     }}
 
-                                    onPress={() => { handleShootLocation("far") }}
+                                    onPress={() => { handleShootLocation("tarmac line") }}
                                 >
-                                    <Text>far</Text>
+                                    <Text>tarmac line</Text>
 
                                 </TouchableOpacity>
+                            </View>
+                            
+                             <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: slightlyColor,
+                                        borderRadius: 5,
+                                        width: 160, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
 
+                                    onPress={() => { handleShootLocation("slightly") }}
+                                >
+                                    <Text>slightly further from line</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: climbColor,
+                                        borderRadius: 5,
+                                        width: 100, height: 30,
+                                        marginRight: 10, marginTop: 10,
+                                        justifyContent: 'center', alignItems: 'center'
+                                    }}
+
+                                    onPress={() => { handleShootLocation("climb") }}
+                                >
+                                    <Text>near the climb</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
                                 <TouchableOpacity
                                     style={{
                                         backgroundColor: anyColor,
@@ -747,6 +815,7 @@ const DataCollect = () => {
                                     <Text>anywhere</Text>
                                 </TouchableOpacity>
                             </View>
+                            
                         </View>
                         <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
                             ---- Hanger ----
@@ -972,7 +1041,7 @@ const DataCollect = () => {
 
 
                             <TextInput
-                                placeholder="exta comments"
+                                placeholder="extra comments"
                                 value={comments}
                                 onChangeText={text => setComments(text)}
                                 style={styles.comments}
