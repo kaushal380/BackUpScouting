@@ -305,11 +305,11 @@ const DataCollect = () => {
             }
             if (slightlyColor === "white") {
                 setSlightlyColor(selectedColor);
-                currentList = [...currentList, "slightly"];
+                currentList = [...currentList, "slightly further from the tarmac"];
             }
             else if (slightlyColor === selectedColor) {
                 setSlightlyColor("white");
-                const index = currentList.findIndex((item) => item === "slightly")
+                const index = currentList.findIndex((item) => item === "slightly further from the tarmac")
                 currentList.splice(index, 1);
             }
         }
@@ -321,11 +321,11 @@ const DataCollect = () => {
             }
             if (climbColor === "white") {
                 setClimbColor(selectedColor);
-                currentList = [...currentList, "climb"];
+                currentList = [...currentList, "near the climb"];
             }
             else if (climbColor === selectedColor) {
                 setClimbColor("white");
-                const index = currentList.findIndex((item) => item === "climb")
+                const index = currentList.findIndex((item) => item === "near the climb")
                 currentList.splice(index, 1);
             }
         }
