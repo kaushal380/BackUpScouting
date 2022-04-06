@@ -26,6 +26,7 @@ const DataCollect = () => {
     const [TeleUpper, setTeleUpper] = useState(0);
     const [TeleLower, setTeleLower] = useState(0);
 
+    const [timeClimb, setTimeClimb] = useState("");
     const [hangerAttempted, sethangerAttempted] = useState(false);
     const [LowAttempted, setLowAttempted] = useState(false);
     const [midAttempted, setMidAttempted] = useState(false);
@@ -820,6 +821,19 @@ const DataCollect = () => {
                         <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
                             ---- Hanger ----
                         </Text>
+                        
+                        <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
+                            <Text style={{ fontSize: 25}}>Heads to Hanger :   </Text>
+
+                            <TextInput
+                                placeholder="time"
+                                value={timeClimb}
+                                onChangeText={text => setTimeClimb(text)}
+                                style={styles.timeClimb}
+                                multiline={true}
+                            />
+
+                        </View>
                         <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 45 }}>
 
                             <Text style={{ fontSize: 25 }}>Low attempted?   : </Text>
@@ -949,8 +963,8 @@ const DataCollect = () => {
                                 >
                                     <Text>Traversal</Text>
                                 </TouchableOpacity>
-
                             </View>
+
                             <Text style={{ alignSelf: 'center', marginTop: 60, fontSize: 30, marginRight: 30 }}>
                                 ---- Defense ----
                             </Text>
@@ -1107,6 +1121,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 5,
         width: 100
+    },
+    timeClimb: {
+        width: 50,
+        height: 30,
+        marginTop: 2,
+        backgroundColor: 'white',
+        borderRadius: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 5
     },
     comments: {
         width: 350,
