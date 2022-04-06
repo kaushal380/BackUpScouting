@@ -191,7 +191,7 @@ const PitScouting = () => {
       {
         scouterName: name,
         teamNum: team,
-        timeScouted: approxTime,
+        timeScouted: new Date().toUTCString(),
         overallReview: review,
         robustRanking: robustnessRanking,
         driverExperience: driverExperience,
@@ -227,7 +227,7 @@ const PitScouting = () => {
 
   const addPitData = async (newList) => {
     const documentSnapshot = await firebase.firestore()
-      .collection("albanyData")
+      .collection("macon2022")
       .doc("pitscouting")
       .get()
 
@@ -238,7 +238,7 @@ const PitScouting = () => {
     let finalObject = Object.assign({}, finalList)
 
     firebaseAccess
-      .collection("albanyData")
+      .collection("macon2022")
       .doc("pitscouting")
       .set(finalObject)
 
@@ -391,14 +391,15 @@ const PitScouting = () => {
             multiline = {true}
           />
 
-          <TextInput
+          {/* <TextInput
             placeholder="Approximate Time Scouted (ie: Friday, 3:30PM)"
             keyboardType="default"
             value={approxTime}
             onChangeText={(text) => setApproxTime(text)}
             style={styles.Teaminput}
             multiline = {true}
-          />
+          /> */}
+          <Text style = {{margin: 30, fontSize: 20}}>time scouted: {new Date().toLocaleString()}</Text>
 
           <TextInput
             placeholder="Overall Review (optional)"

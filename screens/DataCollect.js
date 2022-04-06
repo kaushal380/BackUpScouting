@@ -451,7 +451,7 @@ const DataCollect = () => {
             matchNum: match,
             teamNum: Team,
             taxi: taxiToString,
-            humanShotL: humanShotToText,
+            humanShot: humanShotToText,
             autoAttemptedLower: autoAttemptedLower,
             autoLowerCargo: autoLower,
             AutoAttemptedHiger: autoAttemptedHigher,
@@ -481,7 +481,7 @@ const DataCollect = () => {
 
     const insertData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-            .collection("albanyData")
+            .collection("macon2022")
             .doc("matchScouting")
             .get()
 
@@ -494,7 +494,7 @@ const DataCollect = () => {
         const firebaseAccess = firebase.firestore()
 
         firebaseAccess 
-            .collection("albanyData")
+            .collection("macon2022")
             .doc("matchScouting")
             .set(finalObject)
     }
