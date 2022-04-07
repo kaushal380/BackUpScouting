@@ -261,27 +261,27 @@ const Home = () => {
         <ScrollView>
             <View style={styles.container}>
                 <Text style={styles.title}
-                onPress = {clearFireBase}
+                // onPress = {clearFireBase}
                 >
                     Techno Titans
                 </Text>
 
-                <View style={styles.synchContainer}>
+                {/* <View style={styles.synchContainer}>
                     <TouchableOpacity
                         style={styles.synchButton}
                         onPress={handleUpload}
                     >
                         {/* <Text style={styles.Buttontext}>Upload</Text> */}
-                        <AntDesign name='upload' size={25} color="white" />
+                        {/* <AntDesign name='upload' size={25} color="white" />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.synchButton}
                         onPress={downloadMatchData}
                     >
                         {/* <Text style={styles.Buttontext}>Upload</Text> */}
-                        <AntDesign name='download' size={25} color="white" />
+                        {/* <AntDesign name='download' size={25} color="white" />
                     </TouchableOpacity>
-                </View>
+                </View> */} 
                 <View style={styles.buttonView}>
                     <TouchableOpacity
                         style={styles.ButtonsContainer}
