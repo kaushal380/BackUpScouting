@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, Modal, TouchableOpacity, TextInput } from 'react-native'
 import React, {useState, useEffect} from 'react'
-import { firebase } from '../../firebase/config'
+import { firebase } from '../../../firebase/config'
 import { AntDesign, Entypo } from "@expo/vector-icons"
 import { SwipeListView } from 'react-native-swipe-list-view'
-import TeamSpecificData from './TeamSpecificData'
+import TeamSpecificData from '../TeamSpecificData'
 import * as SQLite from 'expo-sqlite';
 const db = SQLite.openDatabase("scoutingApp.db");
 
-const Defense = () => {
+const CounterDefense = () => {
   const [finalDefenseList, setFinalDefence] = useState([]);
   const [rawData, setRawData] = useState([])
   const [isTeamDataVisible, setTeamDataVisible] = useState(false)
@@ -38,7 +38,7 @@ const Defense = () => {
       for (let i = 0; i < rawData.length; i++) {
         if(teams[index] === rawData[i].teamNum){
           counter++;
-          TotalDefenseRanking = TotalDefenseRanking + rawData[i].defenseRanking;
+          TotalDefenseRanking = TotalDefenseRanking + rawData[i].CounterDefenseRanking;
         }
       }
       avg = TotalDefenseRanking/counter;
@@ -65,19 +65,25 @@ const Defense = () => {
     setFinalDefence(finalDefenseList);
   }
 
-  const getMatchDownload = () => {
-    let sqlList
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM matchDataDownload', [],
-            (tx, results) => {
-                console.log('results length: ', results.rows.length);
-                console.log("Query successful")
-                setRawData(results.rows._array);
-                // sqlList = results.rows._array;
-            })
-    })
-
+  const getMatchDownload = async() => {
+    // let sqlList
+    // db.transaction((tx) => {
+    //     tx.executeSql(
+    //         'SELECT * FROM matchDataDownload', [],
+    //         (tx, results) => {
+    //             console.log('results length: ', results.rows.length);
+    //             console.log("Query successful")
+    //             setRawData(results.rows._array);
+    //             // sqlList = results.rows._array;
+    //         })
+    // })
+    const documentSnapshot = await firebase.firestore()
+      .collection("macon2022")
+      .doc("matchScouting")
+      .get()
+    
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+    setRawData(existingData);
 }
   const handleOpenModal = (currentTeam) => {
     setSelectedTeam(currentTeam)
@@ -144,7 +150,7 @@ const Defense = () => {
   }
 }
 
-export default Defense
+export default CounterDefense
 
 const styles = StyleSheet.create({
     container: {

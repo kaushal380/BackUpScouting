@@ -14,21 +14,18 @@ const AllTeamData = () => {
   const [currentTeam, setCurrentTeam] = useState();
   useLayoutEffect(() => { getEverything() }, []);
 
-  const getEverything = () => {
+  const getEverything = async () => {
 
-    db.transaction((tx) => {
-      tx.executeSql(
-          'SELECT * FROM matchDataDownload', [],
-          (tx, results) => {
-              console.log('results length: ', results.rows.length);
-              console.log("Query successful")
-              setRawData(results.rows._array);
-              // sqlList = results.rows._array;
-          })
-  })
+    const documentSnapshot = await firebase.firestore()
+      .collection("macon2022")
+      .doc("matchScouting")
+      .get()
+    
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+    setRawData(existingData);
     let raw = [];
-    if(rawData){
-      raw = rawData; 
+    if (rawData) {
+      raw = rawData;
     }
     let teams = [];
     for (let i = 0; i < raw.length; i++) {
@@ -67,55 +64,55 @@ const AllTeamData = () => {
     setCurrentTeam(currentTeam)
   }
 
-    let data = finalData;
-    data = data.filter(element => {
-      let key = keyword;
-      let length = key.length;
-      return element.team.substring(0, length).includes(keyword)
-    })
-    data.sort(function (a, b) {
-      if (a.avg > b.avg) {
-        return -1;
-      }
-      if (b.avg > a.avg) {
-        return 1;
-      }
-      return 0;
-    })
-      
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style = {{flexDirection: 'row'}}>
-        <TextInput style={styles.textInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4}/>
-        <TouchableOpacity style = {styles.synchButton} onPress = {getEverything}>
-          <AntDesign name='reload1' size={25} color = 'white'/>
+  let data = finalData;
+  data = data.filter(element => {
+    let key = keyword;
+    let length = key.length;
+    return element.team.substring(0, length).includes(keyword)
+  })
+  data.sort(function (a, b) {
+    if (a.avg > b.avg) {
+      return -1;
+    }
+    if (b.avg > a.avg) {
+      return 1;
+    }
+    return 0;
+  })
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={{ flexDirection: 'row' }}>
+        <TextInput style={styles.textInput} placeholder="Search by Team #" value={keyword} onChangeText={text => setKeyword(text)} keyboardType="number-pad" maxLength={4} />
+        <TouchableOpacity style={styles.synchButton} onPress={getEverything}>
+          <AntDesign name='reload1' size={25} color='white' />
         </TouchableOpacity>
-        </View>
-        <ScrollView>
-          {
-            data.map((element) =>
-              <TouchableOpacity style={styles.item} onPress = {() => {handleModalOpen(element.team)}}>
-                <Text style={styles.text}>
-                  Team: {element.team}
-                  {"\n"}
-                  Matches played: {`${element.matches}`}
-                </Text>
-              </TouchableOpacity>
-            )
-          }
-        </ScrollView>
-        <Modal
-        visible = {modal}
-        >
-          <TeamSpecificData
+      </View>
+      <ScrollView>
+        {
+          data.map((element) =>
+            <TouchableOpacity style={styles.item} onPress={() => { handleModalOpen(element.team) }}>
+              <Text style={styles.text}>
+                Team: {element.team}
+                {"\n"}
+                Matches played: {`${element.matches}`}
+              </Text>
+            </TouchableOpacity>
+          )
+        }
+      </ScrollView>
+      <Modal
+        visible={modal}
+      >
+        <TeamSpecificData
           rawData={rawData}
-          setModal = {setModal}
-          currentTeam = {currentTeam}
-          />
-        </Modal>
-      </SafeAreaView>
-    )
-  }
+          setModal={setModal}
+          currentTeam={currentTeam}
+        />
+      </Modal>
+    </SafeAreaView>
+  )
+}
 
 
 export default AllTeamData
@@ -128,7 +125,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: '#0782F9',
     padding: 20,
-    margin: 10, 
+    margin: 10,
     borderRadius: 20
   },
   text: {
@@ -151,5 +148,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center'
-  }  
+  }
 })

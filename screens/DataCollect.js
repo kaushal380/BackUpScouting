@@ -371,7 +371,7 @@ const DataCollect = () => {
                 currentList.splice(index, 1);
             }
         }
-        console.log(currentList);
+        // console.log(currentList);
         setShootLocation(currentList);
 
         let textVersion = "";
@@ -400,7 +400,7 @@ const DataCollect = () => {
     }
 
     const handleCounterDefenseSwitch = () => {
-        wereDefended === false? setWereDefended(true): setWereDefended(false)
+        wereDefended === false ? setWereDefended(true) : setWereDefended(false)
     }
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
@@ -519,12 +519,12 @@ const DataCollect = () => {
 
 
         let defended = "false";
-        if(didDefend){
+        if (didDefend) {
             defended = "true"
         }
 
         let counterDefense = "false";
-        if(wereDefended){
+        if (wereDefended) {
             counterDefense = "true"
         }
         // createTable();
@@ -533,7 +533,6 @@ const DataCollect = () => {
         //         "INSERT INTO dataCollect (matchNum, teamNum, taxi, humanShot, AutoAttemptedLower, autoLowerCargo, AutoAttemptedHiger, autoUpperCargo, teleAttemptedLower, teleLowerCargo, teleAttemptedHigher, teleUpperCargo, shootingLocation, LowClimbAttempted, midClimbAttempted, highClimbAttempted ,traversalAttempted, climb, defenseRanking, redCard, yelloCard, techFouls, deactivated, disqualified, extraComments) VALUES ('" + match + "', '" + Team + "', '" + taxiToString + "', '" + humanShotToText + "', '" + autoAttemptedLower + "', '" + autoLower + "', '" + autoAttemptedHigher + "', '" + AutoUpper + "', '" + teleAttemptedLower + "', '" + TeleLower + "', '" + teleAttemptedHigher + "', '" + TeleUpper + "', '" + shootLocationText + "', '" + LowClimbAttempted + "', '" + midClimbAttempted + "', '" + highClimbAttempted + "', '" + traversalAtt + "', '" + hanger + "', '" + DefenseRanking + "','" + RedCard + "','" + YelloCard + "','" + techFoul + "','" + isDeactivatedToString + "','" + isDisqualifiedToString + "','" + comments + "')"
         //     )
         // })
-
         let obj = {
             matchNum: match,
             teamNum: Team,
@@ -541,10 +540,11 @@ const DataCollect = () => {
             humanShot: humanShotToText,
             autoAttemptedLower: autoAttemptedLower,
             autoLowerCargo: autoLower,
-            AutoAttemptedHiger: autoAttemptedHigher,
+            AutoAttemptedHigher: autoAttemptedHigher,
             autoUpperCargo: AutoUpper,
             teleAttemptedLower: teleAttemptedLower,
             teleLowerCargo: TeleLower,
+            teleAttemptedHigher: teleAttemptedHigher,
             teleUpperCargo: TeleUpper,
             canShootFromOtherSide: shootOtherSide,
             shootLocation: shootLocationText,
@@ -1064,12 +1064,12 @@ const DataCollect = () => {
                                                 placeholder="Team #"
                                                 keyboardType="number-pad"
                                                 value={defendedTeam}
-                                                onChangeText={text => setdefendedTeam(text)}
+                                                onChangeText={(text) => setdefendedTeam(text)}
                                                 style={styles.defenseTeam}
                                                 textAlign='center'
                                             />
                                         </View>
-                                        <View style = {{marginVertical: 10}}>
+                                        <View style={{ marginVertical: 10 }}>
                                             <Text style={{ fontSize: 18 }}>Rate their defense: {DefenseRanking}</Text>
 
                                             <Slider
@@ -1085,23 +1085,23 @@ const DataCollect = () => {
                                             />
                                         </View>
 
-                                        <View style = {{marginVertical: 20}}>
-                                            <Text style = {{fontSize: 18, marginBottom: 10}}>Elaborate on their defense:</Text>
+                                        <View style={{ marginVertical: 20 }}>
+                                            <Text style={{ fontSize: 18, marginBottom: 10 }}>Elaborate on their defense:</Text>
+                                            
+                                            <TextInput
+                                                placeholder="defense comments"
+                                                value={defenseComments}
+                                                onChangeText={text => setDefenseComments(text)}
+                                                style={styles.defenseComments}
+                                                multiline={true}
 
-                                            <TextInput 
-                                                style = {styles.defenseComments}
-                                                value = {defenseComments}
-                                                onChange = {(text) => {setDefenseComments(text)}}
-                                                spellCheck 
-                                                placeholder='  defense comments'
-                                                textAlignVertical='auto'
                                             />
                                         </View>
                                     </>
                                 }
                             </View>
 
-                            
+
                             <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
                                 <View style={{ flexDirection: 'row' }}>
 
@@ -1124,12 +1124,12 @@ const DataCollect = () => {
                                                 placeholder="Team #"
                                                 keyboardType="number-pad"
                                                 value={DefendedBy}
-                                                onChangeText={text => setdefendedBy(text)}
+                                                onChangeText={(text) => setdefendedBy(text)}
                                                 style={styles.defenseTeam}
                                                 textAlign='center'
                                             />
                                         </View>
-                                        <View style = {{marginVertical: 10}}>
+                                        <View style={{ marginVertical: 10 }}>
                                             <Text style={{ fontSize: 18 }}>Rate their counter defense: {CounterDefenseRanking}</Text>
 
                                             <Slider
@@ -1145,16 +1145,16 @@ const DataCollect = () => {
                                             />
                                         </View>
 
-                                        <View style = {{marginVertical: 20}}>
-                                            <Text style = {{fontSize: 18, marginBottom: 10}}>Elaborate on their counter defense:</Text>
+                                        <View style={{ marginVertical: 20 }}>
+                                            <Text style={{ fontSize: 18, marginBottom: 10 }}>Elaborate on their counter defense:</Text>
 
-                                            <TextInput 
-                                                style = {styles.defenseComments}
-                                                value = {CounterdefenseComments}
-                                                onChange = {(text) => {setCounterDefenseComments(text)}}
-                                                spellCheck 
-                                                placeholder='  counter defense comments'
-                                                textAlignVertical='auto'
+                                            <TextInput
+                                                placeholder="coutner defense comments"
+                                                value={CounterdefenseComments}
+                                                onChangeText={text => setCounterDefenseComments(text)}
+                                                style={styles.defenseComments}
+                                                multiline={true}
+
                                             />
                                         </View>
                                     </>
@@ -1329,9 +1329,12 @@ const styles = StyleSheet.create({
     defenseComments: {
         width: 300,
         height: 120,
+        marginTop: 20,
         backgroundColor: 'white',
-        borderRadius: 10
-    },  
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 10
+    },
     taxiButtons: {
         backgroundColor: "white",
         borderRadius: 5,

@@ -62,19 +62,15 @@ const Climb = () => {
     getMatchDownload()
   }
 
-  const getMatchDownload = () => {
-    let sqlList
-    db.transaction((tx) => {
-        tx.executeSql(
-            'SELECT * FROM matchDataDownload', [],
-            (tx, results) => {
-                console.log('results length: ', results.rows.length);
-                console.log("Query successful")
-                setRawData(results.rows._array);
-                // sqlList = results.rows._array;
-            })
-    })
+  const getMatchDownload = async() => {
 
+    const documentSnapshot = await firebase.firestore()
+      .collection("macon2022")
+      .doc("matchScouting")
+      .get()
+    
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+    setRawData(existingData);
 }
 
   const setVisibleList = (sortType) => {

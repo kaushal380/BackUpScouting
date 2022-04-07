@@ -28,7 +28,7 @@ const Home = () => {
             tx.executeSql(
                 "CREATE TABLE IF NOT EXISTS "
                 + "matchDataDownload "
-                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoAttemptedShots INTEGER, autoLowerCargo INTEGER, autoUpperCargo INTEGER, teleAttemptedShots INTEGER, teleLowerCargo INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, climbAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
+                + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, matchNum TEXT, teamNum TEXT, taxi TEXT, humanShot TEXT, autoAttemptedLower INTEGER, autoLowerCargo INTEGER, AutoAttemptedHiger INTEGER, autoUpperCargo INTEGER, teleAttemptedLower INTEGER, teleLowerCargo INTEGER, teleAttemptedLower INTEGER, teleUpperCargo INTEGER, shootingLocation TEXT, climbAttempted TEXT, climb TEXT, defenseRanking INTEGER, redCard INTEGER, yelloCard INTEGER, techFouls INTEGER, deactivated TEXT, disqualified TEXT, extraComments TEXT);"
             )
         })
     }
