@@ -19,7 +19,7 @@ const Home = () => {
     const clearFireBase = () => {
         firebaseAccess
             .collection("macon2022")
-            .doc("matchScouting")
+            .doc("pictureLinks")
             .set({})
     }
 

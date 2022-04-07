@@ -18,6 +18,7 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
   const [autoUpperConsistency, setAutoUpperConsistency] = useState(0)
   const [autoLowerConsistency, setAutoLowerConsistency] = useState(0)
   const [climbData, setClimbData] = useState([])
+  const [averageclimbTime, setAverageClimbTime] = useState(0);
   const [techFouls, setTechFouls] = useState(0);
   const [redCards, setRedCards] = useState(0);
   const [yellowcards, setYellowcards] = useState(0);
@@ -77,6 +78,7 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
     setTeleLowerCargoData()
     setConsistencies()
     setClimbs()
+    averageClimbTime()
     setAutoUpperCargoData()
     setAutoLowerCargoData()
     pitScoutingStuff()
@@ -108,16 +110,16 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
     return finalData;
   }
 
-  const getPicture = async() => {
+  const getPicture = async () => {
     const documentSnapshot = await firebase.firestore()
-    .collection('macon2022')
-    .doc('pictureLinks')
-    .get()
+      .collection('macon2022')
+      .doc('pictureLinks')
+      .get()
 
     let pictureLinks = Object.values(Object.seal(documentSnapshot.data()))
 
     for (let index = 0; index < pictureLinks.length; index++) {
-      if(pictureLinks[index].teamNum === currentTeam){
+      if (pictureLinks[index].teamNum === currentTeam) {
         setImageUrl(pictureLinks[index].url)
         break;
       }
@@ -411,6 +413,28 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
 
   }
 
+  const averageClimbTime = () => {
+    let filteredTeamData = initializeConsts()[0];
+
+    let totalClimbTime = 0;
+    let counter = 0;
+
+    filteredTeamData.forEach(element => {
+      if ((!(isNaN(element.timeTakenToClimb))) && (element.timeTakenToClimb > 0)) {
+        totalClimbTime = totalClimbTime + element.timeTakenToClimb;
+        counter++;
+      }
+    });
+
+    try {
+      let averageClimbTime = Math.trunc(totalClimbTime / counter);
+      setAverageClimbTime(averageClimbTime)
+    } catch (error) {
+      setAverageClimbTime(0);
+    }
+
+  }
+
   const penalities = () => {
     let filteredTeamData = initializeConsts()[0];
     let matches = initializeConsts()[1];
@@ -451,9 +475,9 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
     let team = currentTeam
     // console.log("pitscoutingggg")
     const documentSnapshot = await firebase.firestore()
-    .collection('macon2022')
-    .doc('pitscouting')
-    .get()
+      .collection('macon2022')
+      .doc('pitscouting')
+      .get()
 
     let pitRaw = Object.values(Object.seal(documentSnapshot.data()))
     // db.transaction((tx) => {
@@ -558,6 +582,8 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
           center={[10, 10]}
           absolute
         />
+        <Text style={{ fontSize: 20, alignSelf: 'center', fontWeight: '100' }}>Average climb time: {averageclimbTime} sec</Text>
+
         <Text style={{ fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900' }}>Auto data: </Text>
         <Text style={{ alignSelf: 'center', fontSize: 20, color: 'black', marginTop: 20 }}>Auto Upper Cargo</Text>
         <LineChart
@@ -610,17 +636,17 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
         <Text style={styles.textViewItems}>disqualified: {disqualified}</Text>
 
         <Text style={{ fontSize: 30, alignSelf: 'flex-start', marginLeft: 15, marginTop: 30, fontWeight: '900' }}>Pitscouting Data: </Text>
-        <Text style = {styles.textViewItems}>Scouter Name: {scouterName}</Text>
-        <Text style = {styles.textViewItems}>Robot Status: {robotStatus}</Text>
-        <Text style = {styles.textViewItems}>Non-functional mechs: {nonFunctionalMech}</Text>
-        <Text style = {styles.textViewItems}>Mechanisms Descriptions : {mechanismsDiscreptions}</Text>
-        <Text style = {styles.textViewItems}>Possible climb : {climbPotential}</Text>
-        <Text style = {styles.textViewItems}>overall review : {overallReview}</Text>
+        <Text style={styles.textViewItems}>Scouter Name: {scouterName}</Text>
+        <Text style={styles.textViewItems}>Robot Status: {robotStatus}</Text>
+        <Text style={styles.textViewItems}>Non-functional mechs: {nonFunctionalMech}</Text>
+        <Text style={styles.textViewItems}>Mechanisms Descriptions : {mechanismsDiscreptions}</Text>
+        <Text style={styles.textViewItems}>Possible climb : {climbPotential}</Text>
+        <Text style={styles.textViewItems}>overall review : {overallReview}</Text>
 
-        <Text style = {{fontSize: 25, alignSelf: "center"}}> Picture!!!:</Text>
-        <Image 
-          source={{uri: imageUrl}}
-          style = {{width: 300, height: 500}}
+        <Text style={{ fontSize: 25, alignSelf: "center" }}> Picture!!!:</Text>
+        <Image
+          source={{ uri: imageUrl }}
+          style={{ width: 300, height: 500 }}
         />
       </View>
     </ScrollView>
