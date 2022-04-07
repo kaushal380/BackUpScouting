@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { LineChart, PieChart } from "react-native-chart-kit";
 import { firebase } from '../../firebase/config';
@@ -29,6 +29,8 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
   const [climbPotential, setClimbPotential] = useState("");//5
   const [nonFunctionalMech, setNonFunctionalMech] = useState("");//3.
   const [robotStatus, setRobotStatus] = useState("") //2.
+
+  const [imageUrl, setImageUrl] = useState("");
   const [chartConfig, setChartConfit] = useState({
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -79,6 +81,7 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
     setAutoLowerCargoData()
     pitScoutingStuff()
     penalities()
+    getPicture()
   }
   const initializeConsts = () => {
     let raw = rawData;
@@ -103,6 +106,22 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
 
     let finalData = [filteredTeamData, matches]
     return finalData;
+  }
+
+  const getPicture = async() => {
+    const documentSnapshot = await firebase.firestore()
+    .collection('macon2022')
+    .doc('pictureLinks')
+    .get()
+
+    let pictureLinks = Object.values(Object.seal(documentSnapshot.data()))
+
+    for (let index = 0; index < pictureLinks.length; index++) {
+      if(pictureLinks[index].teamNum === currentTeam){
+        setImageUrl(pictureLinks[index].url)
+        break;
+      }
+    }
   }
 
   const setConsistencies = () => {
@@ -597,6 +616,12 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
         <Text style = {styles.textViewItems}>Mechanisms Descriptions : {mechanismsDiscreptions}</Text>
         <Text style = {styles.textViewItems}>Possible climb : {climbPotential}</Text>
         <Text style = {styles.textViewItems}>overall review : {overallReview}</Text>
+
+        <Text style = {{fontSize: 25, alignSelf: "center"}}> Picture!!!:</Text>
+        <Image 
+          source={{uri: imageUrl}}
+          style = {{width: 300, height: 500}}
+        />
       </View>
     </ScrollView>
   )
