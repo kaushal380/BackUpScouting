@@ -12,7 +12,7 @@ import { CameraComponent } from "../picturesCollect/Camera";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigation } from "@react-navigation/core";
-
+import { firebase } from "../../firebase/config";
 const PictureCollect = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState("");
@@ -48,9 +48,34 @@ const PictureCollect = () => {
     }
     uploadImageAsync(image).then((url) => {
       console.log(url);
+      let obj = {
+        teamNum: team,
+        url: url
+      }
+      insertPictureData(obj);
       navigation.navigate("Home");
     });
   };
+
+  const insertPictureData = async (newList) => {
+    const documentSnapshot = await firebase.firestore()
+        .collection("macon2022")
+        .doc("pictureLinks")
+        .get()
+
+
+    let existingData = Object.values(Object.seal(documentSnapshot.data()))
+
+    let finalList = existingData.concat(newList)
+
+    let finalObject = Object.assign({}, finalList)
+    const firebaseAccess = firebase.firestore()
+
+    firebaseAccess
+        .collection("macon2022")
+        .doc("pictureLinks")
+        .set(finalObject)
+}
   return (
     <View style={styles.container}>
       <ScrollView>
