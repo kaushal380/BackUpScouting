@@ -49,8 +49,17 @@ const DataCollect = () => {
     const [climbColor, setClimbColor] = useState("white");
     const [anyColor, setAnyColor] = useState("white");
 
-    const [Drivetrainranking, setDrivetrainranking] = useState(1);
+
+    const [didDefend, setDidDefend] = useState(false);
+    const [defendedTeam, setdefendedTeam] = useState("");
     const [DefenseRanking, setDefenceRanking] = useState(1);
+    const [defenseComments, setDefenseComments] = useState("")
+
+
+    const [wereDefended, setWereDefended] = useState(false);
+    const [DefendedBy, setdefendedBy] = useState("");
+    const [CounterDefenseRanking, setCounterDefenceRanking] = useState(1);
+    const [CounterdefenseComments, setCounterDefenseComments] = useState("")
 
     const [techFoul, setTechFoul] = useState(0);
     const [RedCard, setRedCard] = useState(0);
@@ -261,7 +270,7 @@ const DataCollect = () => {
     }
 
     const handleShootAreaCheck = () => {
-        shootFromOtherSide === false? setShootFromOtherSide(true): setShootFromOtherSide(false);
+        shootFromOtherSide === false ? setShootFromOtherSide(true) : setShootFromOtherSide(false);
     }
     const handleShootLocation = (type) => {
         let selectedColor = "#0782F9";
@@ -385,6 +394,14 @@ const DataCollect = () => {
     const handleHangerAttemptTrav = () => {
         traversalAttempted === false ? setTreversalAttempted(true) : setTreversalAttempted(false)
     }
+
+    const handleDefenseSwitch = () => {
+        didDefend === false ? setDidDefend(true) : setDidDefend(false)
+    }
+
+    const handleCounterDefenseSwitch = () => {
+        wereDefended === false? setWereDefended(true): setWereDefended(false)
+    }
     const handleHanger = (type) => {
         let selectedColor = "#0782F9"
 
@@ -494,13 +511,22 @@ const DataCollect = () => {
         }
 
         let shootOtherSide = "false";
-        if(shootFromOtherSide){
+        if (shootFromOtherSide) {
             shootOtherSide = "true";
         }
 
         let climbTime = parseInt(timeClimb)
 
-        
+
+        let defended = "false";
+        if(didDefend){
+            defended = "true"
+        }
+
+        let counterDefense = "false";
+        if(wereDefended){
+            counterDefense = "true"
+        }
         // createTable();
         // db.transaction((tx) => {
         //     tx.executeSql(
@@ -528,7 +554,14 @@ const DataCollect = () => {
             highClimbAttempted: highClimbAttempted,
             traversalAttempted: traversalAtt,
             climb: hanger,
+            didDefend: defended,
+            defendedTeam: defendedTeam,
             defenseRanking: DefenseRanking,
+            defenseComments: defenseComments,
+            wereDefended: counterDefense,
+            counterDefendedTeam: DefendedBy,
+            CounterDefenseRanking: CounterDefenseRanking,
+            CounterdefenseComments: CounterdefenseComments,
             redCard: RedCard,
             yelloCard: YelloCard,
             techFouls: techFoul,
@@ -556,7 +589,7 @@ const DataCollect = () => {
         let finalObject = Object.assign({}, finalList)
         const firebaseAccess = firebase.firestore()
 
-        firebaseAccess 
+        firebaseAccess
             .collection("macon2022")
             .doc("matchScouting")
             .set(finalObject)
@@ -809,8 +842,8 @@ const DataCollect = () => {
 
                                 </TouchableOpacity>
                             </View>
-                            
-                             <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
+
+                            <View style={{ flexDirection: 'row', alignSelf: 'flex-start', marginTop: 10 }}>
                                 <TouchableOpacity
                                     style={{
                                         backgroundColor: slightlyColor,
@@ -855,19 +888,19 @@ const DataCollect = () => {
                                     <Text>anywhere</Text>
                                 </TouchableOpacity>
                             </View>
-                            
+
                         </View>
                         <Text style={{ alignSelf: 'center', marginTop: 30, fontSize: 30, marginLeft: 30 }}>
                             ---- Hanger ----
                         </Text>
-                        
+
                         <View style={{ flexDirection: 'row', alignSelf: 'flex-start', justifyContent: 'center', marginTop: 30, marginLeft: 40 }}>
-                            <Text style={{ fontSize: 25}}>Heads to Hanger :   </Text>
+                            <Text style={{ fontSize: 25 }}>Heads to Hanger :   </Text>
 
                             <TextInput
                                 placeholder="time"
                                 value={timeClimb}
-                                keyboardType = 'number-pad'
+                                keyboardType='number-pad'
                                 onChangeText={text => setTimeClimb(text)}
                                 style={styles.timeClimb}
                                 multiline={true}
@@ -1010,18 +1043,122 @@ const DataCollect = () => {
                             </Text>
 
                             <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
-                                <Text style={{ fontSize: 25 }}>Defense ranking : {DefenseRanking}</Text>
-                                <Slider
-                                    value={DefenseRanking}
-                                    onValueChange={(num) => { setDefenceRanking(num) }}
-                                    minimumValue={1}
-                                    maximumValue={5}
-                                    step={1}
-                                    onSlidingComplete={(num) => { setDefenceRanking(num) }}
-                                    allowTouchTrack
-                                    trackStyle={{ height: 10 }}
-                                    thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
-                                />
+                                <View style={{ flexDirection: 'row' }}>
+
+                                    <Text style={{ fontSize: 25 }}>played defense? </Text>
+                                    {/* add human player shot*/}
+                                    <Switch
+                                        style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                        trackColor={{ false: "grey", true: "grey" }}//#767577
+                                        thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={handleDefenseSwitch}
+                                        value={didDefend}
+                                    />
+                                </View>
+                                {didDefend &&
+                                    <>
+                                        <View style={{ flexDirection: 'row', marginVertical: 20, alignItems: 'center' }}>
+                                            <Text style={{ fontSize: 18, marginRight: 10 }}>Team they defended:</Text>
+                                            <TextInput
+                                                placeholder="Team #"
+                                                keyboardType="number-pad"
+                                                value={defendedTeam}
+                                                onChangeText={text => setdefendedTeam(text)}
+                                                style={styles.defenseTeam}
+                                                textAlign='center'
+                                            />
+                                        </View>
+                                        <View style = {{marginVertical: 10}}>
+                                            <Text style={{ fontSize: 18 }}>Rate their defense: {DefenseRanking}</Text>
+
+                                            <Slider
+                                                value={DefenseRanking}
+                                                onValueChange={(num) => { setDefenceRanking(num) }}
+                                                minimumValue={1}
+                                                maximumValue={5}
+                                                step={1}
+                                                onSlidingComplete={(num) => { setDefenceRanking(num) }}
+                                                allowTouchTrack
+                                                trackStyle={{ height: 10 }}
+                                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                                            />
+                                        </View>
+
+                                        <View style = {{marginVertical: 20}}>
+                                            <Text style = {{fontSize: 18, marginBottom: 10}}>Elaborate on their defense:</Text>
+
+                                            <TextInput 
+                                                style = {styles.defenseComments}
+                                                value = {defenseComments}
+                                                onChange = {(text) => {setDefenseComments(text)}}
+                                                spellCheck 
+                                                placeholder='  defense comments'
+                                                textAlignVertical='auto'
+                                            />
+                                        </View>
+                                    </>
+                                }
+                            </View>
+
+                            
+                            <View style={{ marginTop: 40, alignContent: 'center', marginRight: 40 }}>
+                                <View style={{ flexDirection: 'row' }}>
+
+                                    <Text style={{ fontSize: 25 }}>Were defended? </Text>
+                                    {/* add human player shot*/}
+                                    <Switch
+                                        style={{ alignSelf: 'flex-start', marginBottom: -5, marginTop: -5 }}
+                                        trackColor={{ false: "grey", true: "grey" }}//#767577
+                                        thumbColor={HumanPlayer ? "black" : "black"}//#f5dd4b
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={handleCounterDefenseSwitch}
+                                        value={wereDefended}
+                                    />
+                                </View>
+                                {wereDefended &&
+                                    <>
+                                        <View style={{ flexDirection: 'row', marginVertical: 20, alignItems: 'center' }}>
+                                            <Text style={{ fontSize: 18, marginRight: 10 }}>Team they were defended by:</Text>
+                                            <TextInput
+                                                placeholder="Team #"
+                                                keyboardType="number-pad"
+                                                value={DefendedBy}
+                                                onChangeText={text => setdefendedBy(text)}
+                                                style={styles.defenseTeam}
+                                                textAlign='center'
+                                            />
+                                        </View>
+                                        <View style = {{marginVertical: 10}}>
+                                            <Text style={{ fontSize: 18 }}>Rate their counter defense: {CounterDefenseRanking}</Text>
+
+                                            <Slider
+                                                value={CounterDefenseRanking}
+                                                onValueChange={(num) => { setCounterDefenceRanking(num) }}
+                                                minimumValue={1}
+                                                maximumValue={5}
+                                                step={1}
+                                                onSlidingComplete={(num) => { setCounterDefenceRanking(num) }}
+                                                allowTouchTrack
+                                                trackStyle={{ height: 10 }}
+                                                thumbStyle={{ height: 20, width: 20, backgroundColor: "grey" }}
+                                            />
+                                        </View>
+
+                                        <View style = {{marginVertical: 20}}>
+                                            <Text style = {{fontSize: 18, marginBottom: 10}}>Elaborate on their counter defense:</Text>
+
+                                            <TextInput 
+                                                style = {styles.defenseComments}
+                                                value = {CounterdefenseComments}
+                                                onChange = {(text) => {setCounterDefenseComments(text)}}
+                                                spellCheck 
+                                                placeholder='  counter defense comments'
+                                                textAlignVertical='auto'
+                                            />
+                                        </View>
+                                    </>
+                                }
                             </View>
                         </View>
 
@@ -1162,6 +1299,15 @@ const styles = StyleSheet.create({
         marginTop: 5,
         width: 100
     },
+    defenseTeam: {
+        backgroundColor: 'white',
+        borderRadius: 5,
+        width: 70,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center'
+    },
     timeClimb: {
         width: 50,
         height: 30,
@@ -1180,6 +1326,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 10
     },
+    defenseComments: {
+        width: 300,
+        height: 120,
+        backgroundColor: 'white',
+        borderRadius: 10
+    },  
     taxiButtons: {
         backgroundColor: "white",
         borderRadius: 5,

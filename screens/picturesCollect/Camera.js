@@ -16,7 +16,7 @@ export const CameraComponent = ({image, setImage}) => {
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
-            quality: 0.01,
+            quality: 0.1,
         });
 
         if (!result.cancelled) {
@@ -35,7 +35,7 @@ export const CameraComponent = ({image, setImage}) => {
     }
 
     const takePhoto = async () => {
-        const { uri } = await camera.takePictureAsync({ quality: 0.05 });
+        const { uri } = await camera.takePictureAsync({ quality: 0.2 });
         setImage(uri);
     }
 
