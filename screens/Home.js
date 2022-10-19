@@ -18,7 +18,7 @@ const Home = () => {
 
     const clearFireBase = () => {
         firebaseAccess
-            .collection("macon2022")
+            .collection("grits")
             .doc("pictureLinks")
             .set({})
     }
@@ -40,7 +40,7 @@ const Home = () => {
         let pitData;
         try {
             const documentSnapshot = await firebase.firestore()
-                .collection("macon2022")
+                .collection("grits")
                 .doc("matchScouting")
                 .get()
                 .then(
@@ -54,7 +54,7 @@ const Home = () => {
             existingData = Object.values(Object.seal(documentSnapshot.data()))
 
             const documentSnapshot1 = await firebase.firestore()
-                .collection("macon2022")
+                .collection("grits")
                 .doc('pitscouting')
                 .get()
                 .then(
@@ -141,9 +141,9 @@ const Home = () => {
     }
     const addNewData = async (newList) => {
         // console.log(newList)
-        console.log("macon2022")
+        console.log("grits")
         const documentSnapshot = await firebase.firestore()
-            .collection("macon2022")
+            .collection("grits")
             .doc("matchScouting")
             .get()
 
@@ -155,7 +155,7 @@ const Home = () => {
         let finalObject = Object.assign({}, finalList)
         // console.log(finalObject);
         firebaseAccess
-            .collection("macon2022")
+            .collection("grits")
             .doc("matchScouting")
             .set(finalObject)
             .then(clearDBData)
@@ -164,7 +164,7 @@ const Home = () => {
 
     const addPitScoutingData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-            .collection("macon2022")
+            .collection("grits")
             .doc('pitscouting')
             .get()
 
@@ -176,7 +176,7 @@ const Home = () => {
         let finalObject = Object.assign({}, finalList)
         // console.log(finalObject);
         firebaseAccess
-            .collection("macon2022")
+            .collection("grits")
             .doc('pitscouting')
             .set(finalObject)
             .then(clearDBData)

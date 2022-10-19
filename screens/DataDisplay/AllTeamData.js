@@ -17,7 +17,7 @@ const AllTeamData = () => {
   const getEverything = async () => {
 
     const documentSnapshot = await firebase.firestore()
-      .collection("macon2022")
+      .collection("grits")
       .doc("matchScouting")
       .get()
     

@@ -577,7 +577,7 @@ const DataCollect = () => {
 
     const insertData = async (newList) => {
         const documentSnapshot = await firebase.firestore()
-            .collection("macon2022")
+            .collection("grits")
             .doc("matchScouting")
             .get()
 
@@ -590,7 +590,7 @@ const DataCollect = () => {
         const firebaseAccess = firebase.firestore()
 
         firebaseAccess
-            .collection("macon2022")
+            .collection("grits")
             .doc("matchScouting")
             .set(finalObject)
     }
