@@ -4,7 +4,7 @@
     "slug": "TitanScoutingApp",
     "version": "1.0.8",
     "orientation": "portrait",
-    "owner": "techno-titans",
+    "owner": "katescouting",
     "icon": "./assets/Images/logo_512x512.png",
     "splash": {
       "image": "./assets/Images/logo_512x512.png",
@@ -19,7 +19,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "technotitans.scoutingapp"
+      "bundleIdentifier": "technotitans.scoutingapp",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends",
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
     },
     "description": "An application for Techno Titan members to collect data during competition.",
     "android": {
@@ -28,7 +33,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,6 +51,11 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "12908fc9-468c-4fcd-9423-168e4dcf47f1"
+      }
+    }
   }
 }
