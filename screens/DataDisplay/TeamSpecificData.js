@@ -112,7 +112,7 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
 
   const getPicture = async () => {
     const documentSnapshot = await firebase.firestore()
-      .collection('macon2022')
+      .collection('grits')
       .doc('pictureLinks')
       .get()
 
@@ -475,7 +475,7 @@ const TeamSpecificData = ({ currentTeam, rawData, setModal }) => {
     let team = currentTeam
     // console.log("pitscoutingggg")
     const documentSnapshot = await firebase.firestore()
-      .collection('macon2022')
+      .collection('grits')
       .doc('pitscouting')
       .get()
 

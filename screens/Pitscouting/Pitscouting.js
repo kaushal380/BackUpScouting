@@ -227,7 +227,7 @@ const PitScouting = () => {
 
   const addPitData = async (newList) => {
     const documentSnapshot = await firebase.firestore()
-      .collection("macon2022")
+      .collection("grits")
       .doc("pitscouting")
       .get()
 
@@ -238,7 +238,7 @@ const PitScouting = () => {
     let finalObject = Object.assign({}, finalList)
 
     firebaseAccess
-      .collection("macon2022")
+      .collection("grits")
       .doc("pitscouting")
       .set(finalObject)
 

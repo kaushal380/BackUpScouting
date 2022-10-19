@@ -59,7 +59,7 @@ const PictureCollect = () => {
 
   const insertPictureData = async (newList) => {
     const documentSnapshot = await firebase.firestore()
-        .collection("macon2022")
+        .collection("grits")
         .doc("pictureLinks")
         .get()
 
@@ -72,7 +72,7 @@ const PictureCollect = () => {
     const firebaseAccess = firebase.firestore()
 
     firebaseAccess
-        .collection("macon2022")
+        .collection("grits")
         .doc("pictureLinks")
         .set(finalObject)
 }
